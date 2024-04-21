@@ -22,7 +22,7 @@ function Navbar({ onReset }) {
         temperature: 0.5
       });
 
-      const suggestion = response.choices[0].text.trim();
+      console.log("Respuesta de IA:", response.data.choices[0].text.trim());
       console.log("Sugerencia de IA:", suggestion);
       message.success("Mejores resultados con IA obtenidos");
     } catch (error) {

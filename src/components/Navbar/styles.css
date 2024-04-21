@@ -39,13 +39,12 @@
     align-items: center;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 18px;
-    margin-left: 8px;
-    padding: 5px;
-    border: 2px solid transparent;
+
 }
 
 .navbar-button:hover {
     border-radius: 8px;
+
     background-color: #4978bb;
     color: #77e4ff;
 }
@@ -80,4 +79,14 @@
 
 .ant-dropdown-menu-item {
     border: 1px solid transparent; 
+}
+
+
+.navbar-button-special {
+    display: flex;
+    justify-content:flex-end;
+    padding-right: 25%;
+    color: rgb(141, 23, 219);
+    padding-top: 5px;
+    
 }
