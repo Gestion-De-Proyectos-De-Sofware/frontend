@@ -1,0 +1,33 @@
+.navbar-container {
+    display: flex;
+    justify-content: space-between; /* Asegura que los botones y el botón especial estén separados */
+    padding: 18px;
+    color: white;
+    background-color: orange;
+}
+
+.navbar-buttons {
+    display: flex;
+    justify-content: flex-start; /* Alinea todos los botones de navbar-button a la izquierda */
+}
+
+.navbar-button {
+    margin-left: 8px;
+    padding: 5px;
+    border: 2px solid transparent;
+}
+
+.navbar-button:hover {
+    border-radius: 8px;
+    background-color: #ffc04b;
+    color: rgb(57, 57, 57);
+}
+
+.navbar-button-special {
+    display: flex;
+    justify-content:flex-end;
+    padding-right: 25%;
+    color: rgb(141, 23, 219);
+    padding-top: 5px;
+    
+}
