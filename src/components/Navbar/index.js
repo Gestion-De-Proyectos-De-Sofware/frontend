@@ -45,16 +45,21 @@ function Navbar({ onReset }) {
       <Menu.Item key="new">Nuevo</Menu.Item>
       <Menu.Item key="save">Guardar</Menu.Item>
       <Menu.Item key="trash">Mover a la papelera</Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="zoomIn">Acercar</Menu.Item>
+      <Menu.Item key="zoomOut">Alejar</Menu.Item>
+      <Menu.Item key="resetView">Restablecer vista</Menu.Item>
     </Menu>
   );
 
   const editMenu = (
     <Menu>
-      <Menu.Item key="undo">Deshacer</Menu.Item>
-      <Menu.Item key="redo">Rehacer</Menu.Item>
       <Menu.Item key="cut">Cortar</Menu.Item>
       <Menu.Item key="copy">Copiar</Menu.Item>
       <Menu.Item key="paste">Pegar</Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="undo">Deshacer</Menu.Item>
+      <Menu.Item key="redo">Rehacer</Menu.Item>
     </Menu>
   );
 
@@ -65,13 +70,6 @@ function Navbar({ onReset }) {
     </Menu>
   );
 
-  const viewMenu = (
-    <Menu>
-      <Menu.Item key="zoomIn">Acercar</Menu.Item>
-      <Menu.Item key="zoomOut">Alejar</Menu.Item>
-      <Menu.Item key="resetView">Restablecer vista</Menu.Item>
-    </Menu>
-  );
 
   return (
     <div className="navbar-container">
@@ -84,9 +82,6 @@ function Navbar({ onReset }) {
         </Dropdown>
         <Dropdown overlay={selectMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
           <span className="navbar-button">Seleccionar</span>
-        </Dropdown>
-        <Dropdown overlay={viewMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
-          <span className="navbar-button">Visualizar</span>
         </Dropdown>
       </div>
       <span className="navbar-button-special">Probar suerte</span>
