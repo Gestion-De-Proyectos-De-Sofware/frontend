@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import Modeler from 'bpmn-js';
 import BpmnModeler from "bpmn-js";
 import diagramXML from "./resources/newDiagram.bpmn";
 
@@ -12,15 +11,24 @@ class ModelerCreator extends Component {
   }
 
   componentDidMount() {
-    console.log("diagramModeler: ", this.diagramModeler);
+    this.loadDiagram(diagramXML);
+  }
 
-    // diagramModeler.attachTo('js-canvas-container');
-    this.diagramModeler.importXML(diagramXML, err => {
-      if (err) console.error(err);
-      else {
-        console.log("New diagram is ready");
+  loadDiagram = (xml) => {
+    this.diagramModeler.importXML(xml, err => {
+      if (err) {
+        console.error("Failed to load diagram:", err);
+      } else {
+        console.log("Diagram loaded successfully");
       }
     });
+  }
+
+  resetDiagram = () => {
+    if (window.confirm("¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?")) {
+      this.loadDiagram(diagramXML); // Reload the initial diagram
+      console.log("Diagram reset to new");
+    }
   }
 
   render() {
