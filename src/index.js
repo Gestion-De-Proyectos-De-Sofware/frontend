@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Navbar from "./components/Navbar";
+import Navbar from './components/Navbar';
 import BpmnView from "./diagramViewer";
 import ModelerCreator from "./diagramCreator/index";
 import "./styles.css";
