@@ -84,7 +84,7 @@ function Navbar({ onReset }) {
           <span className="navbar-button">Seleccionar</span>
         </Dropdown>
       </div>
-      <span className="navbar-button-special">Probar suerte</span>
+      <span className="navbar-button-special">Busqueda Inteligente</span>
     </div>
   );
 }
