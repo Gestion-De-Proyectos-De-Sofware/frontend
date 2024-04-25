@@ -21,7 +21,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --env=jsdom",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
         "eject": "react-scripts eject"
     },
     "browserslist": [
@@ -29,5 +29,13 @@
         "not dead",
         "not ie <= 11",
         "not op_mini all"
-    ]
+    ],
+    "devDependencies": {
+        "@babel/plugin-transform-modules-commonjs": "^7.24.1",
+        "@babel/preset-react": "^7.24.1",
+        "cypress": "^13.8.1"
+    },
+    "jest": {
+        "transform": {}
+    }
 }
