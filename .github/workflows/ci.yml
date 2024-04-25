@@ -1,0 +1,32 @@
+name: Continuous Integration Workflow
+
+on:
+  pull_request:
+    branches:
+      - testing
+  push:
+    branches:
+      - testing
+
+jobs:
+
+  test:
+    name: 'Run unit tests'
+    defaults:
+      run:
+        shell: bash
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      name: 'Checkout repository'
+
+    - name: 'Install Dependencies'
+      run: npm install
+    
+    - name: 'Run Tests'
+      run: npm run test 
+
+    - name: 'Run coverage'
+      run: npm run coverage
