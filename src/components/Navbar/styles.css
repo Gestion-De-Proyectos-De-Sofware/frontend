@@ -1,3 +1,11 @@
+@media (max-width: 768px) {
+    .navbar-button-special {
+        /* Estilos específicos para dispositivos con una anchura máxima de 768px */
+        margin-right: 5%; /* Modifica el margen derecho para dispositivos más pequeños */
+    }
+}
+
+
 .navbar-container {
     display: flex;
     justify-content: space-between;
@@ -5,16 +13,14 @@
     color: white;
     background-color: #022759;
     margin-top: 0;
-    
-}
-
-.navbar-buttons {
-    display: flex;
-    justify-content: flex-start;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .navbar-button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 18px;
     margin-left: 8px;
     padding: 5px;
     border: 2px solid transparent;
@@ -28,24 +34,26 @@
 
 .navbar-button-special {
     display: flex;
-    justify-content:flex-end;
-    padding-right: 25%;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 25%;
     font-weight: bold;
     font-style: oblique;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: #adf4ff;
     padding-top: 5px;
-    
+    font-size: 1rem;
+    background-color: transparent;
+    border: 0.2rem solid;
+    border-color: #83d2ff;
 }
 
 .ant-dropdown-menu {
     font-family: Helvetica, Arial, sans-serif;
-  }
-
-
+    font-size: 12px;
+    
+}
 
 .ant-dropdown-menu-item {
     border: 1px solid transparent; 
-  }
-
-
+}
