@@ -5,6 +5,7 @@ import './styles.css';
 
 function Navbar({ onReset }) {
 
+  {/**  
     const handleSave = () => {
         const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
         const url = window.URL.createObjectURL(data);
@@ -38,6 +39,12 @@ function Navbar({ onReset }) {
           message.success("Todo eliminado");
         }
       };
+  */}
+
+  const handleAI = async () => {
+    console.log("Busqueda con IA");
+    message.success("Busqueda con IA");
+  };
 
 
   const fileMenu = (
@@ -46,30 +53,11 @@ function Navbar({ onReset }) {
       <Menu.Item key="save">Guardar</Menu.Item>
       <Menu.Item key="trash">Mover a la papelera</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="zoomIn">Acercar</Menu.Item>
-      <Menu.Item key="zoomOut">Alejar</Menu.Item>
-      <Menu.Item key="resetView">Restablecer vista</Menu.Item>
+      <Menu.Item key="history" onClick={() => setMostrarHistorial(!mostrarHistorial)}>Historial</Menu.Item>
     </Menu>
   );
 
-  const editMenu = (
-    <Menu>
-      <Menu.Item key="cut">Cortar</Menu.Item>
-      <Menu.Item key="copy">Copiar</Menu.Item>
-      <Menu.Item key="paste">Pegar</Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="undo">Deshacer</Menu.Item>
-      <Menu.Item key="redo">Rehacer</Menu.Item>
-    </Menu>
-  );
-
-  const selectMenu = (
-    <Menu>
-      <Menu.Item key="all">Todo</Menu.Item>
-      <Menu.Item key="inverse">Inverso</Menu.Item>
-    </Menu>
-  );
-
+  
 
   return (
     <div className="navbar-container">
@@ -77,14 +65,9 @@ function Navbar({ onReset }) {
         <Dropdown overlay={fileMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
           <span className="navbar-button">Archivo</span>
         </Dropdown>
-        <Dropdown overlay={editMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
-          <span className="navbar-button">Editar</span>
-        </Dropdown>
-        <Dropdown overlay={selectMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
-          <span className="navbar-button">Seleccionar</span>
-        </Dropdown>
       </div>
-      <span className="navbar-button-special">Busqueda Inteligente</span>
+      <Button className="navbar-button-special" onClick={handleAI}>Busqueda con IA</Button>
+      
     </div>
   );
 }
