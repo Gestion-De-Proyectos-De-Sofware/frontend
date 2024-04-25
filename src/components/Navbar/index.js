@@ -92,8 +92,9 @@ function Navbar({ onReset }) {
           <span className="navbar-button">Archivo</span>
         </Dropdown>
       </div>
+
       <Button className="navbar-button-IA" onClick={handleAI}>Busqueda con IA</Button>
-      
+
     </div>
   );
 }
