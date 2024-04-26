@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import Navbar from './components/Navbar';
 import BpmnView from "./diagramViewer";
 import ModelerCreator from "./diagramCreator/index";
 import "./styles.css";
@@ -7,6 +8,7 @@ import "./styles.css";
 function App() {
   return (
     <div className="App">
+      <Navbar />
       {/** This is for viewer only 
       https://stackoverflow.com/questions/42708361/integrating-bpmn-js-to-modeler-the-react-component
       */}
