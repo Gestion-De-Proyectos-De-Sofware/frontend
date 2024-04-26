@@ -8,6 +8,8 @@ html,
 body,
 #root {
 	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 #js-canvas {
@@ -25,11 +27,7 @@ body,
 	background-color: #f8f8f8;
 }
 
-/* Sobrescribe el estilo del panel de propiedades */
 .djs-palette {
-	background-color: #e6e6e6; /* Cambia el color de fondo */
-	border: 2px solid #020202; /* Añade un borde a la izquierda */
-	min-width: 100px;
-	color: #333; /* Cambia el color del texto */
-	border-radius: 10px;
+	border: 1px solid #020202;
+	border-radius: 5px;
 }
