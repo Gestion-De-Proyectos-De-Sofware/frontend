@@ -53,7 +53,7 @@ function Navbar({ onReset }) {
       <Menu.Item key="save">Guardar</Menu.Item>
       <Menu.Item key="trash">Mover a la papelera</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="history" onClick={() => setMostrarHistorial(!mostrarHistorial)}>Historial</Menu.Item>
+      <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>Historial</Menu.Item>
     </Menu>
   );
 
@@ -66,7 +66,7 @@ function Navbar({ onReset }) {
           <span className="navbar-button">Archivo</span>
         </Dropdown>
       </div>
-      <Button className="navbar-button-special" onClick={handleAI}>Busqueda con IA</Button>
+      <Button className="navbar-button-IA" onClick={handleAI}>Busqueda con IA</Button>
       
     </div>
   );

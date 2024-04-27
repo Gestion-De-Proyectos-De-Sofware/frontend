@@ -1,7 +1,25 @@
-@media (max-width: 768px) {
-    .navbar-button-special {
-        /* Estilos específicos para dispositivos con una anchura máxima de 768px */
-        margin-right: 5%; /* Modifica el margen derecho para dispositivos más pequeños */
+
+
+@media (min-width: 577px) and (max-width: 992px) {
+    .navbar-button-IA {
+        font-size: 1rem; 
+        margin-right: 50%; 
+        padding: 5px; 
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    .navbar-button-IA {
+        font-size: 1.1rem; 
+        margin-right: 30%;
+        padding: 6px;
+    }
+}
+@media (min-width: 1201px) {
+    .navbar-button-IA {
+        font-size: 1.2rem; 
+        margin-right: 25%; 
+        padding: 7px; 
     }
 }
 
@@ -32,11 +50,10 @@
     color: #77e4ff;
 }
 
-.navbar-button-special {
+.navbar-button-IA {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-right: 25%;
     font-weight: bold;
     font-style: oblique;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -47,6 +64,13 @@
     border: 0.2rem solid;
     border-color: #83d2ff;
 }
+
+.navbar-button-IA:hover {
+    border-color: #baf6ff !important;
+    background-color: transparent !important;
+    color: #baf6ff !important;
+}
+
 
 .ant-dropdown-menu {
     font-family: Helvetica, Arial, sans-serif;
