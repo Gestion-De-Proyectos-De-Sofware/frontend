@@ -1,23 +1,44 @@
 import React from 'react';
+import { OpenAI } from 'openai'; // -> Si es con OpenAI
 import { Menu, Dropdown, Button, message } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
-import { useTranslation } from 'react-i18next';
-import DropdownLang from '../Dropdown/index';
+
+
+const openai = new OpenAI({
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true, 
+});
 
 function Navbar({ onReset }) {
+  console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY);
 
-  const [t, i18n] = useTranslation("global")
+  const handleAI = async () => {
+    try {
+      const response = await openai.Completion.create({
+        model: "gpt-3.5-turbo",
+        prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
+        max_tokens: 50,
+        temperature: 0.5
+      });
 
-  const handleChangeLanguage = (lang) => {
-    console.log("new language choosen: ",lang)
-    if (lang == "English"){
-      i18n.changeLanguage("en");
-    }else{
-      i18n.changeLanguage("es");
+      console.log("Respuesta de IA:", response.data.choices[0].text.trim());
+      console.log("Sugerencia de IA:", suggestion);
+      message.success("Mejores resultados con IA obtenidos");
+    } catch (error) {
+      console.error("Error al conectar con la IA", error);
+      if (error.response) {
+        console.log("Datos de la respuesta:", error.response.data);
+        console.log("Estado de la respuesta:", error.response.status);
+      } else if (error.request) {
+        console.log("Petición hecha sin respuesta", error.request);
+      } else {
+       
+        console.log('Error', error.message);
+      }
+      message.error("Error al realizar la búsqueda con IA");
     }
-    
-  }
+  };
 
   {/**  
     const handleSave = () => {
@@ -39,7 +60,6 @@ function Navbar({ onReset }) {
         }
       };
     
-    
       const handleDuplicate = () => {
         // Aquí agregas la lógica para duplicar el contenido actual
         console.log("Contenido duplicado");
@@ -55,33 +75,25 @@ function Navbar({ onReset }) {
       };
   */}
 
-  const handleAI = async () => {
-    console.log(t("header.messageSuccess"));
-    message.success(t("header.messageSuccess"));
-  };
-
-
   const fileMenu = (
     <Menu>
-      <Menu.Item key="new">{t("fileMenu.new")}</Menu.Item>
-      <Menu.Item key="save">{t("fileMenu.save")}</Menu.Item>
-      <Menu.Item key="trash">{t("fileMenu.trash")}</Menu.Item>
+      <Menu.Item key="new">Nuevo</Menu.Item>
+      <Menu.Item key="save">Guardar</Menu.Item>
+      <Menu.Item key="trash">Mover a la papelera</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>{t("fileMenu.history")}</Menu.Item>
+      <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>Historial</Menu.Item>
     </Menu>
   );
-
-  
 
   return (
     <div className="navbar-container">
       <div className="navbar-buttons">
         <Dropdown overlay={fileMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
-          <span className="navbar-button">{t("body.buttonFileName")}</span>
+          <span className="navbar-button">Archivo</span>
         </Dropdown>
       </div>
-      <Button className="navbar-button-IA" onClick={handleAI}>{t("body.buttonSearchIA")}</Button>
-      <DropdownLang onClick={handleChangeLanguage}></DropdownLang>
+      <Button className="navbar-button-IA" onClick={handleAI}>Busqueda con IA</Button>
+      
     </div>
   );
 }
