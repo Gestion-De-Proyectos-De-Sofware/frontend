@@ -1,9 +1,58 @@
 import React from 'react';
+import axios from 'axios';
+// import { OpenAI } from 'openai'; -> Si es directamente con OpenIA
 import { Menu, Dropdown, Button, message } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
 
+{/** const openai = new OpenAI({
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true, 
+}); ->Si es directamente con OpenIA*/}
+
+
 function Navbar({ onReset }) {
+
+
+  const handleAI = async () => {
+    const headers = {
+      'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+      'Content-Type': 'application/json'
+    };
+
+    // Realice el prompt -> Quien corresponda
+    const prompt = "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn ";
+
+    const data = {
+      prompt: prompt,
+      max_tokens: 50
+    };
+
+    try {
+      const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', data, { headers });
+      console.log("Respuesta de IA:", response.data.choices[0].text.trim());
+      message.success("Mejores resultados con IA obtenidos");
+    } catch (error) {
+      console.error("Error al conectar con la IA", error);
+      message.error("Error al realizar la búsqueda con IA");
+    }
+  };
+
+  {/** const handleAI = async () => {
+    try {
+      const response = await openai.Completion.create({
+        model: "text-davinci-003", // Asegúrate de usar el modelo adecuado
+        prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
+        max_tokens: 50
+      });
+
+      console.log("Respuesta de IA:", response.choices[0].text.trim());
+      message.success("Búsqueda con IA completada");
+    } catch (error) {
+      console.error("Error al conectar con la IA", error);
+      message.error("Error al realizar la búsqueda con IA");
+    }
+  }; -> Si es directamente con OpenIA */}
 
   {/**  
     const handleSave = () => {
@@ -25,7 +74,6 @@ function Navbar({ onReset }) {
         }
       };
     
-    
       const handleDuplicate = () => {
         // Aquí agregas la lógica para duplicar el contenido actual
         console.log("Contenido duplicado");
@@ -41,12 +89,6 @@ function Navbar({ onReset }) {
       };
   */}
 
-  const handleAI = async () => {
-    console.log("Busqueda con IA");
-    message.success("Busqueda con IA");
-  };
-
-
   const fileMenu = (
     <Menu>
       <Menu.Item key="new">Nuevo</Menu.Item>
@@ -56,8 +98,6 @@ function Navbar({ onReset }) {
       <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>Historial</Menu.Item>
     </Menu>
   );
-
-  
 
   return (
     <div className="navbar-container">
