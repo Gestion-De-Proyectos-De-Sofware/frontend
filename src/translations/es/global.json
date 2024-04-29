@@ -1,0 +1,18 @@
+{
+    "header":{
+        "messageSuccess": "Busqueda con IA"
+    },
+    "fileMenu":{
+        "new": "Nuevo",
+        "save": "guardar",
+        "trash": "Mover a la papelera",
+        "history": "Historial"
+    },
+    "body":{
+        "buttonFileName": "Archivo",
+        "buttonSearchIA": "Busqueda con IA"
+    },
+    "prompts":{
+        "window": "¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?"
+    }
+}

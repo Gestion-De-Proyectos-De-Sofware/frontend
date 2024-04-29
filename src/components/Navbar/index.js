@@ -2,8 +2,22 @@ import React from 'react';
 import { Menu, Dropdown, Button, message } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
+import { useTranslation } from 'react-i18next';
+import DropdownLang from '../Dropdown/index';
 
 function Navbar({ onReset }) {
+
+  const [t, i18n] = useTranslation("global")
+
+  const handleChangeLanguage = (lang) => {
+    console.log("new language choosen: ",lang)
+    if (lang == "English"){
+      i18n.changeLanguage("en");
+    }else{
+      i18n.changeLanguage("es");
+    }
+    
+  }
 
   {/**  
     const handleSave = () => {
@@ -42,18 +56,18 @@ function Navbar({ onReset }) {
   */}
 
   const handleAI = async () => {
-    console.log("Busqueda con IA");
-    message.success("Busqueda con IA");
+    console.log(t("header.messageSuccess"));
+    message.success(t("header.messageSuccess"));
   };
 
 
   const fileMenu = (
     <Menu>
-      <Menu.Item key="new">Nuevo</Menu.Item>
-      <Menu.Item key="save">Guardar</Menu.Item>
-      <Menu.Item key="trash">Mover a la papelera</Menu.Item>
+      <Menu.Item key="new">{t("fileMenu.new")}</Menu.Item>
+      <Menu.Item key="save">{t("fileMenu.save")}</Menu.Item>
+      <Menu.Item key="trash">{t("fileMenu.trash")}</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>Historial</Menu.Item>
+      <Menu.Item key="history" onClick={() => {/** setMostrarHistorial(!mostrarHistorial)*/}}>{t("fileMenu.history")}</Menu.Item>
     </Menu>
   );
 
@@ -63,11 +77,11 @@ function Navbar({ onReset }) {
     <div className="navbar-container">
       <div className="navbar-buttons">
         <Dropdown overlay={fileMenu} className="navbar-dropdown" trigger={['click']} overlayStyle={{ border: 'none' }}>
-          <span className="navbar-button">Archivo</span>
+          <span className="navbar-button">{t("body.buttonFileName")}</span>
         </Dropdown>
       </div>
-      <Button className="navbar-button-IA" onClick={handleAI}>Busqueda con IA</Button>
-      
+      <Button className="navbar-button-IA" onClick={handleAI}>{t("body.buttonSearchIA")}</Button>
+      <DropdownLang onClick={handleChangeLanguage}></DropdownLang>
     </div>
   );
 }
