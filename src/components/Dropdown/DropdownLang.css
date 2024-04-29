@@ -1,0 +1,22 @@
+/* DropdownLang.css */
+
+.dropdown-container {
+    width: 100px;
+    margin: 2px;
+  }
+  
+  .dropdown-select {
+
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .dropdown-select:focus {
+    outline: none;
+    border-color: #007bff; /* Change border color when focused */
+  }
+  
