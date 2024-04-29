@@ -25,7 +25,7 @@ class ModelerCreator extends Component {
   }
 
   resetDiagram = () => {
-    if (window.confirm("¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?")) {
+    if (window.confirm("Are you sure to delete what you made and create a new canvas?")) {
       this.loadDiagram(diagramXML); // Reload the initial diagram
       console.log("Diagram reset to new");
     }

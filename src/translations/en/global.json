@@ -1,0 +1,18 @@
+{
+    "header":{
+        "messageSuccess": "Search with AI"
+    },
+    "fileMenu":{
+        "new": "New",
+        "save": "Save",
+        "trash": "Move to trash",
+        "history": "History"
+    },
+    "body":{
+        "buttonFileName": "File",
+        "buttonSearchIA": "Search with AI"
+    },
+    "prompts":{
+        "window": "Are you sure to delete what you made and create a new canvas?"
+    }
+}
