@@ -1,9 +1,15 @@
 node_modules
 package-lock.json
+yarn.lock
 .vercel
 .env
 .env.local
 .env.development
 .env.test
 .env.production
-
+build
+dist
+.vscode
+.idea
+npm-debug.log
+yarn-error.log
