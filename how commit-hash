@@ -1,0 +1,191 @@
+[33mcommit faf6c31a3609467bfdaafb639282beb8f033e8fd[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sat May 4 23:44:12 2024 -0500
+
+    Update .gitignore
+
+[33mcommit cca0a3422470d8322a6cb776d4a5e88f577d5f94[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sat May 4 23:43:19 2024 -0500
+
+    Update .gitignore
+
+[33mcommit ea7292a5a73b214098bec8e81f68482ed21ad491[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sat May 4 23:38:33 2024 -0500
+
+    Update/test
+
+[33mcommit e3ee235e0b976479404adb0af791a1ef47464ee2[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sat May 4 21:31:52 2024 -0500
+
+    Prueba conexión con gpt
+
+[33mcommit 692510610d0698abd4e0b387028a915ae0025029[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sat Apr 27 01:29:24 2024 -0500
+
+    Conexión Chatgpt
+    
+    Se realizó la conexión a chat Gpt de forma basica al FRONTEND
+    * Especificar si será al frontend o al backend
+    * Especificar si será con axios
+    * Que alguien por favor agregue la clave API
+
+[33mcommit 20aaf0ff4557d5d3fbe2989ca9e279e968150fa9[m
+Merge: ad5b57e 21d2808
+Author: Marcela Mazo <110745955+marcela981@users.noreply.github.com>
+Date:   Fri Apr 26 19:24:35 2024 -0500
+
+    Merge pull request #9 from Gestion-De-Proyectos-De-Sofware/IHUI-33-Navbar
+    
+    Update
+
+[33mcommit 21d2808cc8a5f049e8be8d1e500a054120fa7c66[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Fri Apr 26 19:22:53 2024 -0500
+
+    Update
+    
+    Cambio en estilo grafico por enésima vez
+
+[33mcommit ad5b57e68e4f419b8bb6b5fc7dacef67a0840dca[m
+Merge: 6f3a299 46d1112
+Author: Alessandro Díaz <76846113+alessandrodiaz@users.noreply.github.com>
+Date:   Fri Apr 26 15:47:55 2024 -0500
+
+    Merge pull request #8 from Gestion-De-Proyectos-De-Sofware/IHUI-2-Sidebar
+    
+    Ih UI 2 sidebar
+
+[33mcommit 46d11123f904ffa2a74c631b35a4b4c0a16236b7[m
+Author: alessandrodiaz <alessdg02@gmail.com>
+Date:   Fri Apr 26 15:44:53 2024 -0500
+
+    Modificaciones sidebar
+
+[33mcommit 7f2a6cb0bf97a59fd3bda8f7e8154b5a4d58b8f6[m
+Merge: 55824b0 6f3a299
+Author: alessandrodiaz <alessdg02@gmail.com>
+Date:   Fri Apr 26 15:37:04 2024 -0500
+
+    Merge branch 'master' of https://github.com/Gestion-De-Proyectos-De-Sofware/frontend
+
+[33mcommit 6f3a299fbcc2a447f68fd65e31e5bd2428536934[m
+Merge: 56058c1 43c3ad4
+Author: Marcela Mazo <110745955+marcela981@users.noreply.github.com>
+Date:   Thu Apr 25 18:26:30 2024 -0500
+
+    Merge pull request #7 from Gestion-De-Proyectos-De-Sofware/IHUI-33-Navbar
+    
+    update
+
+[33mcommit 43c3ad492f6d81482009e15f92391b94c7d89768[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Thu Apr 25 18:23:40 2024 -0500
+
+    update
+
+[33mcommit 56058c150da1f0be161d76817412a11a3d014e4c[m
+Merge: a7d588b c0ae381
+Author: Alejandro Marroquín <106278424+AlejandroMarroquin18@users.noreply.github.com>
+Date:   Thu Apr 25 09:40:38 2024 -0500
+
+    Merge pull request #6 from Gestion-De-Proyectos-De-Sofware/IHUI-42
+    
+    Test
+
+[33mcommit c0ae38128ac1f43561af06287a317ae2ce0bc281[m
+Author: Alejandro Marroquín <106278424+AlejandroMarroquin18@users.noreply.github.com>
+Date:   Thu Apr 25 09:37:49 2024 -0500
+
+    Test
+
+[33mcommit a7d588b15828f8eb227f6b83568e4d399d44505e[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Wed Apr 24 23:57:09 2024 -0500
+
+    Fix the navbar
+
+[33mcommit d9b2e2c0e06967a99b62ea559d7deeabf64a60bd[m
+Merge: 69ddb63 0724f39
+Author: Marcela Mazo <110745955+marcela981@users.noreply.github.com>
+Date:   Wed Apr 24 23:51:49 2024 -0500
+
+    Merge pull request #5 from Gestion-De-Proyectos-De-Sofware/IHUI-33-Navbar
+    
+    IHUI-33-NavBar
+
+[33mcommit 0724f39b3f78100ab35c17a3a60d64f3e60bfb71[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Wed Apr 24 23:50:11 2024 -0500
+
+    Update
+
+[33mcommit 55824b07cc824effd921f5541aaf106699f28cdb[m
+Author: alessandrodiaz <alessdg02@gmail.com>
+Date:   Tue Apr 23 13:15:16 2024 -0500
+
+    Cambio del estilo del sidebar con figuras
+
+[33mcommit bfd40b84622556256fae789b4d51bcf56bf078d9[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sun Apr 21 15:25:41 2024 -0500
+
+    Update
+    
+    Los botones del menú aún no sirven
+
+[33mcommit c3162796fdd481dfc4c19aa256a85a22d8af44b2[m
+Author: Marcela Mazo <marcela.mazo@correounivalle.edu.co>
+Date:   Sun Apr 21 01:34:19 2024 -0500
+
+    IHUI-33-NavBar
+    
+    Revisar el navbar por favor, el css tiene una relación de aspecto diferente.
+
+[33mcommit 69ddb632759ba57a5533377f62cee4c4ed9ed52f[m
+Author: EdinsonDorado <62119357+EdinsonUwU@users.noreply.github.com>
+Date:   Fri Apr 12 21:28:46 2024 -0500
+
+    Update front.yaml
+
+[33mcommit ee05eb9aa7aa39c2911ab1d68515689b6b68307b[m
+Merge: 8b9cda9 63f3dca
+Author: EdinsonDorado <62119357+EdinsonUwU@users.noreply.github.com>
+Date:   Fri Apr 12 21:27:33 2024 -0500
+
+    Merge pull request #4 from Gestion-De-Proyectos-De-Sofware/testing
+    
+    Testing
+
+[33mcommit 63f3dca845f78694b3e6df5f4d4023b66d486604[m
+Merge: 8b9cda9 98fd5e6
+Author: EdinsonDorado <62119357+EdinsonUwU@users.noreply.github.com>
+Date:   Fri Apr 12 21:27:16 2024 -0500
+
+    Merge pull request #3 from Gestion-De-Proyectos-De-Sofware/development
+    
+    Development
+
+[33mcommit 98fd5e6079cf912157a3c45afb7781a1e80df2ec[m
+Merge: 8b9cda9 a6751ae
+Author: EdinsonDorado <62119357+EdinsonUwU@users.noreply.github.com>
+Date:   Fri Apr 12 21:26:34 2024 -0500
+
+    Merge pull request #2 from Gestion-De-Proyectos-De-Sofware/IHUI-40-Despliegue-de-la-aplicacion
+    
+    IHUI-1 Despliegue
+
+[33mcommit a6751ae267004007d751c0508911c49b5fc6a903[m[33m ([m[1;31morigin/IHUI-40-Despliegue-de-la-aplicacion[m[33m)[m
+Author: edinsonuwu <edinson.dorado@correounivalle.edu.co>
+Date:   Fri Apr 12 21:21:20 2024 -0500
+
+    IHUI-1 Despliegue
+
+[33mcommit 8b9cda9948e9036c5a40bda3a0253708b459073c[m
+Author: edinsonuwu <edinson.dorado@correounivalle.edu.co>
+Date:   Fri Apr 12 18:51:35 2024 -0500
+
+    first commit
