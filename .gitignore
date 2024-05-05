@@ -1,4 +1,9 @@
 node_modules
+package-lock.json
 .vercel
 .env
+.env.local
+.env.development
+.env.test
+.env.production
 
