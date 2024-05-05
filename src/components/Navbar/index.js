@@ -13,6 +13,8 @@ import './styles.css';
 
 function Navbar({ onReset }) {
 
+  console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY);
+
 
   const handleAI = async () => {
     const headers = {
@@ -25,7 +27,8 @@ function Navbar({ onReset }) {
 
     const data = {
       prompt: prompt,
-      max_tokens: 50
+      max_tokens: 50,
+      temperature: 0.5
     };
 
     try {
@@ -34,9 +37,20 @@ function Navbar({ onReset }) {
       message.success("Mejores resultados con IA obtenidos");
     } catch (error) {
       console.error("Error al conectar con la IA", error);
+      if (error.response) {
+        // La respuesta que fue proporcionada por el servidor
+        console.log("Datos de la respuesta:", error.response.data);
+        console.log("Estado de la respuesta:", error.response.status);
+        console.log("Cabeceras de la respuesta:", error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        console.log("Petición hecha sin respuesta", error.request);
+      } else {
+        // Algo ocurrió en la configuración de la petición que provocó un Error
+        console.log('Error', error.message);
+      }
       message.error("Error al realizar la búsqueda con IA");
-    }
-  };
+    }}
 
   {/** const handleAI = async () => {
     try {
