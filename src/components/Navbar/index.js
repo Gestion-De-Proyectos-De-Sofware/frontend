@@ -1,11 +1,19 @@
 import React from 'react';
 import { Menu, Dropdown, Button, message } from 'antd';
+import { OpenAI } from 'openai'; 
 import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
 import { useTranslation } from 'react-i18next';
 import DropdownLang from '../Dropdown/index';
 
+
+const openai = new OpenAI({
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true, 
+});
+
 function Navbar({ onReset }) {
+  console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY);
 
   const [t, i18n] = useTranslation("global")
 
@@ -18,6 +26,33 @@ function Navbar({ onReset }) {
     }
     
   }
+
+  const handleAI = async () => {
+    try {
+      const response = await openai.Completion.create({
+        model: "gpt-3.5-turbo",
+        prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
+        max_tokens: 50,
+        temperature: 0.5
+      });
+
+      console.log("Respuesta de IA:", response.data.choices[0].text.trim());
+      console.log("Sugerencia de IA:", suggestion);
+      message.success("Mejores resultados con IA obtenidos");
+    } catch (error) {
+      console.error("Error al conectar con la IA", error);
+      if (error.response) {
+        console.log("Datos de la respuesta:", error.response.data);
+        console.log("Estado de la respuesta:", error.response.status);
+      } else if (error.request) {
+        console.log("Petición hecha sin respuesta", error.request);
+      } else {
+       
+        console.log('Error', error.message);
+      }
+      message.error("Error al realizar la búsqueda con IA");
+    }
+  };
 
   {/**  
     const handleSave = () => {
@@ -54,11 +89,6 @@ function Navbar({ onReset }) {
         }
       };
   */}
-
-  const handleAI = async () => {
-    console.log(t("header.messageSuccess"));
-    message.success(t("header.messageSuccess"));
-  };
 
 
   const fileMenu = (

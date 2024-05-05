@@ -1,2 +1,8 @@
 node_modules
+package-lock.json
+yarn.lock
 .vercel
+.env
+build
+build
+dist
