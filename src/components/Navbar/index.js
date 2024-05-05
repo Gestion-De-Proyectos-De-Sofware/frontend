@@ -1,72 +1,44 @@
 import React from 'react';
-import axios from 'axios';
-// import { OpenAI } from 'openai'; -> Si es directamente con OpenIA
+import { OpenAI } from 'openai'; // -> Si es con OpenAI
 import { Menu, Dropdown, Button, message } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
 
-{/** const openai = new OpenAI({
+
+const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true, 
-}); ->Si es directamente con OpenIA*/}
-
+});
 
 function Navbar({ onReset }) {
-
   console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY);
 
-
   const handleAI = async () => {
-    const headers = {
-      'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-      'Content-Type': 'application/json'
-    };
-
-    // Realice el prompt -> Quien corresponda
-    const prompt = "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn ";
-
-    const data = {
-      prompt: prompt,
-      max_tokens: 50,
-      temperature: 0.5
-    };
-
     try {
-      const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', data, { headers });
-      console.log("Respuesta de IA:", response.data.choices[0].text.trim());
+      const response = await openai.Completion.create({
+        model: "gpt-3.5-turbo",
+        prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
+        max_tokens: 50,
+        temperature: 0.5
+      });
+
+      const suggestion = response.choices[0].text.trim();
+      console.log("Sugerencia de IA:", suggestion);
       message.success("Mejores resultados con IA obtenidos");
     } catch (error) {
       console.error("Error al conectar con la IA", error);
       if (error.response) {
-        // La respuesta que fue proporcionada por el servidor
         console.log("Datos de la respuesta:", error.response.data);
         console.log("Estado de la respuesta:", error.response.status);
-        console.log("Cabeceras de la respuesta:", error.response.headers);
       } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
         console.log("Petición hecha sin respuesta", error.request);
       } else {
-        // Algo ocurrió en la configuración de la petición que provocó un Error
+       
         console.log('Error', error.message);
       }
       message.error("Error al realizar la búsqueda con IA");
-    }}
-
-  {/** const handleAI = async () => {
-    try {
-      const response = await openai.Completion.create({
-        model: "text-davinci-003", // Asegúrate de usar el modelo adecuado
-        prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
-        max_tokens: 50
-      });
-
-      console.log("Respuesta de IA:", response.choices[0].text.trim());
-      message.success("Búsqueda con IA completada");
-    } catch (error) {
-      console.error("Error al conectar con la IA", error);
-      message.error("Error al realizar la búsqueda con IA");
     }
-  }; -> Si es directamente con OpenIA */}
+  };
 
   {/**  
     const handleSave = () => {
