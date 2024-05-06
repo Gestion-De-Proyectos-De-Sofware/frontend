@@ -4,10 +4,13 @@ import { DownOutlined } from '@ant-design/icons';
 import './styles.css';
 import { useTranslation } from 'react-i18next';
 import DropdownLang from '../Dropdown/index';
+import {useDiagramDefinitions} from "../../contexts/DiagramDefinitions";
+
 
 function Navbar({ onReset }) {
 
   const [t, i18n] = useTranslation("global")
+    const { diagramDefinitions } = useDiagramDefinitions();
 
   const handleChangeLanguage = (lang) => {
     console.log("new language choosen: ",lang)
@@ -55,10 +58,31 @@ function Navbar({ onReset }) {
       };
   */}
 
-  const handleAI = async () => {
-    console.log(t("header.messageSuccess"));
-    message.success(t("header.messageSuccess"));
-  };
+    const handleAI = async () => {
+        console.log(t("header.messageSuccess"));
+        message.success(t("header.messageSuccess"));
+        console.log("debugging definitions: ", diagramDefinitions);
+        console.log("getting xml from modeler: ",
+            getXmlFromModeler(diagramDefinitions)
+            .then((xml) => {console.log("xml obtenido con exito: ", xml)})
+                .catch((error) => {console.error("Error obteniendo definiciones del diagrama:", error)})
+        );
+    };
+
+    function getXmlFromModeler(modeler) {
+        return new Promise((resolve, reject) => {
+            modeler.saveXML(
+                {format: true},
+                (err, xml) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(xml)
+                    }
+                }
+            )
+        })
+    }
 
 
   const fileMenu = (
