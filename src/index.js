@@ -9,6 +9,8 @@ import global_en from "./translations/en/global.json"
 import global_es from "./translations/es/global.json"
 import i18next from "i18next";
 import { I18nextProvider } from "react-i18next";
+import {DiagramDefinitionsProvider} from "./contexts/DiagramDefinitions";
+
 
 i18next.init({
   interpolation: { escapeValue: false },
@@ -27,15 +29,18 @@ i18next.init({
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      {/** This is for viewer only 
-      https://stackoverflow.com/questions/42708361/integrating-bpmn-js-to-modeler-the-react-component
-      */}
-      <BpmnView />
+      <DiagramDefinitionsProvider>
+          <Navbar />
+          {/** This is for viewer only
+          https://stackoverflow.com/questions/42708361/integrating-bpmn-js-to-modeler-the-react-component
+          */}
+          <BpmnView />
+          {/** This is for Model creator
+          Comment out the nextblock will reveal the above Viewer
+          */}
+      </DiagramDefinitionsProvider>
 
-      {/** This is for Model creator 
-      Comment out the nextblock will reveal the above Viewer
-      */}
+
       {/* <div id="js-canvas-container">
         <ModelerCreator />
       </div> */}

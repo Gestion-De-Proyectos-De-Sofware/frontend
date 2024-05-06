@@ -1,20 +1,23 @@
-import React from "react";
-import { Menu, Dropdown, Button, message } from "antd";
+import React from 'react';
+import { Menu, Dropdown, Button, message } from 'antd';
 import { OpenAI } from "openai";
-import { DownOutlined } from "@ant-design/icons";
-import "./styles.css";
-import { useTranslation } from "react-i18next";
-import DropdownLang from "../Dropdown/index";
+import { DownOutlined } from '@ant-design/icons';
+import './styles.css';
+import { useTranslation } from 'react-i18next';
+import DropdownLang from '../Dropdown/index';
+import {useDiagramDefinitions} from "../../contexts/DiagramDefinitions";
 
 const openai = new OpenAI({
-	apiKey: process.env.REACT_APP_GPT_KEY,
-	dangerouslyAllowBrowser: true,
+    apiKey: process.env.REACT_APP_GPT_KEY,
+    dangerouslyAllowBrowser: true,
 });
+
 
 function Navbar({ onReset }) {
 	console.log("API Key:", process.env.REACT_APP_GPT_KEY);
 
-	const [t, i18n] = useTranslation("global");
+  const [t, i18n] = useTranslation("global")
+  const { diagramDefinitions } = useDiagramDefinitions();
 
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
@@ -26,6 +29,13 @@ function Navbar({ onReset }) {
 	};
 
 	const handleAI = async () => {
+        console.log("debugging definitions: ", diagramDefinitions);
+        console.log("getting xml from modeler: ",
+            getXmlFromModeler(diagramDefinitions)
+                .then((xml) => {console.log("xml obtenido con exito: ", xml)})
+                .catch((error) => {console.error("Error obteniendo definiciones del diagrama:", error)})
+        );
+
 		try {
 			const response = await openai.Completion.create({
 				model: "gpt-3.5-turbo",
@@ -51,8 +61,23 @@ function Navbar({ onReset }) {
 		}
 	};
 
-	{
-		/**  
+
+    function getXmlFromModeler(modeler) {
+        return new Promise((resolve, reject) => {
+            modeler.saveXML(
+                {format: true},
+                (err, xml) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(xml)
+                    }
+                }
+            )
+        })
+    }
+
+  {/**  
     const handleSave = () => {
         const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
         const url = window.URL.createObjectURL(data);
@@ -86,8 +111,7 @@ function Navbar({ onReset }) {
           message.success("Todo eliminado");
         }
       };
-  */
-	}
+  */}
 
 	const fileMenu = (
 		<Menu>
