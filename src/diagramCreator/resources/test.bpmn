@@ -1,0 +1,69 @@
+
+  <collaboration id="sid-c0e745ff-361e-4afb-8c8d-2a1fc32b1424">
+    <extensionElements>
+      <camunda:properties>
+        <camunda:property name="hola" value="1" />
+      </camunda:properties>
+    </extensionElements>
+    <participant id="sid-87F4C1D6-25E1-4A45-9DA7-AD945993D06F" name="Cliente" processRef="sid-C3803939-0872-457F-8336-EAE484DC4A04" />
+    <participant id="Participant_0mhc32q" name="Empleado de ventas" processRef="Process_09mko2y" />
+    <participant id="Participant_0ld6vog" name="Bodega" processRef="Process_1lixb0g" />
+    <messageFlow id="MessageFlow_0jnpddk" sourceRef="Task_020wfhh" targetRef="Task_1vn0bke" />
+    <messageFlow id="MessageFlow_15vlgv3" sourceRef="Task_05ypel9" targetRef="Task_00vcoxw" />
+    <messageFlow id="MessageFlow_0mn472a" name="Sugerir cambio en la orden" sourceRef="Task_0jw2ciu" targetRef="Task_06thxx1" />
+    <messageFlow id="Flow_0tt0pka" name="Generar factura" sourceRef="Task_18j261d" targetRef="Activity_0itwr9x" />
+  </collaboration>
+  <process id="sid-C3803939-0872-457F-8336-EAE484DC4A04" name="Customer" processType="None" isClosed="false" isExecutable="false">
+    <extensionElements />
+    <laneSet id="sid-b167d0d7-e761-4636-9200-76b7f0e8e83a">
+      <lane id="sid-57E4FE0D-18E4-478D-BC5D-B15164E93254" name="">
+        <flowNodeRef>sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138</flowNodeRef>
+        <flowNodeRef>Task_020wfhh</flowNodeRef>
+        <flowNodeRef>Task_06thxx1</flowNodeRef>
+        <flowNodeRef>Activity_0itwr9x</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138" name="Inicio">
+      <outgoing>SequenceFlow_0ayryza</outgoing>
+    </startEvent>
+    <task id="Task_020wfhh" name="Hacer orden de compra">
+      <incoming>SequenceFlow_0ayryza</incoming>
+    </task>
+    <task id="Task_06thxx1" name="Recibir respuesta" />
+    <task id="Activity_0itwr9x" name="Recibir factura" />
+    <sequenceFlow id="SequenceFlow_0ayryza" sourceRef="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138" targetRef="Task_020wfhh" />
+  </process>
+  <process id="Process_09mko2y">
+    <receiveTask id="Task_1vn0bke" name="Recibir orden">
+      <outgoing>SequenceFlow_1evtq63</outgoing>
+    </receiveTask>
+    <task id="Task_0jw2ciu" name="Sugerir cambio por otro producto">
+      <incoming>SequenceFlow_0vtqgii</incoming>
+    </task>
+    <task id="Task_05ypel9" name="Solicitar paquete de mercancías">
+      <incoming>SequenceFlow_06xntq8</incoming>
+    </task>
+    <exclusiveGateway id="ExclusiveGateway_0vawk79" name="¿Stock suficiente?">
+      <incoming>SequenceFlow_1evtq63</incoming>
+      <outgoing>SequenceFlow_06xntq8</outgoing>
+      <outgoing>SequenceFlow_0vtqgii</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_1evtq63" sourceRef="Task_1vn0bke" targetRef="ExclusiveGateway_0vawk79" />
+    <sequenceFlow id="SequenceFlow_0vtqgii" name="NO" sourceRef="ExclusiveGateway_0vawk79" targetRef="Task_0jw2ciu" />
+    <sequenceFlow id="SequenceFlow_06xntq8" name="SÍ" sourceRef="ExclusiveGateway_0vawk79" targetRef="Task_05ypel9" />
+  </process>
+  <process id="Process_1lixb0g">
+    <task id="Task_00vcoxw" name="Empacar mercancía">
+      <outgoing>SequenceFlow_1vmzhhu</outgoing>
+    </task>
+    <task id="Task_18j261d" name="Enviar mercancía">
+      <incoming>SequenceFlow_1vmzhhu</incoming>
+      <outgoing>SequenceFlow_17c5a5w</outgoing>
+    </task>
+    <endEvent id="EndEvent_0l800er" name="Orden completada">
+      <incoming>SequenceFlow_17c5a5w</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_1vmzhhu" sourceRef="Task_00vcoxw" targetRef="Task_18j261d" />
+    <sequenceFlow id="SequenceFlow_17c5a5w" sourceRef="Task_18j261d" targetRef="EndEvent_0l800er" />
+  </process>
+

@@ -1,23 +1,21 @@
-import React from 'react';
-import { Menu, Dropdown, Button, message } from 'antd';
+import React from "react";
+import { Menu, Dropdown, Button, message } from "antd";
 import { OpenAI } from "openai";
-import { DownOutlined } from '@ant-design/icons';
-import './styles.css';
-import { useTranslation } from 'react-i18next';
-import DropdownLang from '../Dropdown/index';
-import {useDiagramDefinitions} from "../../contexts/DiagramDefinitions";
+import { DownOutlined } from "@ant-design/icons";
+import "./styles.css";
+import { useTranslation } from "react-i18next";
+import DropdownLang from "../Dropdown/index";
+import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
+import xmltest from "../../diagramCreator/resources/test.bpmn";
 
 const openai = new OpenAI({
-    apiKey: process.env.REACT_APP_GPT_KEY,
-    dangerouslyAllowBrowser: true,
+	apiKey: process.env.REACT_APP_GPT_KEY,
+	dangerouslyAllowBrowser: true,
 });
 
-
 function Navbar({ onReset }) {
-	console.log("API Key:", process.env.REACT_APP_GPT_KEY);
-
-  const [t, i18n] = useTranslation("global")
-  const { diagramDefinitions } = useDiagramDefinitions();
+	const [t, i18n] = useTranslation("global");
+	const { diagramDefinitions } = useDiagramDefinitions();
 
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
@@ -29,24 +27,82 @@ function Navbar({ onReset }) {
 	};
 
 	const handleAI = async () => {
-        console.log("debugging definitions: ", diagramDefinitions);
-        console.log("getting xml from modeler: ",
-            getXmlFromModeler(diagramDefinitions)
-                .then((xml) => {console.log("xml obtenido con exito: ", xml)})
-                .catch((error) => {console.error("Error obteniendo definiciones del diagrama:", error)})
-        );
+		console.log("debugging definitions: ", diagramDefinitions);
+		// console.log(
+		// 	"getting xml from modeler: ",
+		// 	getXmlFromModeler(diagramDefinitions)
+		// 		.then((xml) => {
+		// 			console.log("xml obtenido con exito: ", xml);
+		// 		})
+		// 		.catch((error) => {
+		// 			console.error("Error obteniendo definiciones del diagrama:", error);
+		// 		})
+		// );
 
 		try {
-			const response = await openai.Completion.create({
+			// const xml = await getXmlFromModeler(diagramDefinitions);
+
+			// console.log("XML obtenido con exito: ", xml);
+
+			const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+      
+      Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
+      
+      Debes identificar al menos dos historias por cada subproceso y describirlas detalladamente. Presenta tus hallazgos en formato JSON como se muestra a continuación:
+
+      {
+        "(id del subproceso)" : {
+          "name": "Nombre del subproceso según el diagrama XML",
+          "description": "Descripción de las actividades clave que se realizan en este subproceso",
+          "user_stories": [
+            {
+              "id": "hu1",
+              "description": "Descripción de la historia de usuario 1",
+              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
+            },
+            {
+              "id": "hu2",
+              "description": "Descripción de la historia de usuario 2",
+              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
+            }
+          ]
+        },
+        [agrega el resto de subprocesos]
+        
+      }
+      
+      Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones, toma de decisiones o cualquier otro elemento relevante que la IA podría manejar.
+
+      Notas adicionales:
+      -El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
+      -Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
+
+      Este es el diagrama en formato XML: \n${xmltest} 
+      
+      `;
+
+			console.log("Enviando solicitud a GPT");
+			const response = await openai.chat.completions.create({
 				model: "gpt-3.5-turbo",
-				prompt: "Realiza la mejor estimación de puntos para historias de usuario segun la bmpn",
-				max_tokens: 50,
+				// prompt: prompt,
+				// max_tokens: 50,
 				temperature: 0.5,
+				messages: [
+					{
+						content: prompt,
+						role: "user",
+					},
+				],
 			});
 
-			console.log("Respuesta de IA:", response.data.choices[0].text.trim());
-			console.log("Sugerencia de IA:", suggestion);
-			message.success("Mejores resultados con IA obtenidos");
+			console.log("RESPUESTA");
+			// console.log(response.choices);
+			const data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
+			console.log(JSON.stringify(data));
+			console.log(data);
+			// console.log("Respuesta de IA:", response.data.choices[0].text.trim());
+			// console.log("Sugerencia de IA:", suggestion);
+			// message.success("Mejores resultados con IA obtenidos");
 		} catch (error) {
 			console.error("Error al conectar con la IA", error);
 			if (error.response) {
@@ -61,23 +117,20 @@ function Navbar({ onReset }) {
 		}
 	};
 
+	function getXmlFromModeler(modeler) {
+		return new Promise((resolve, reject) => {
+			modeler.saveXML({ format: true }, (err, xml) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(xml);
+				}
+			});
+		});
+	}
 
-    function getXmlFromModeler(modeler) {
-        return new Promise((resolve, reject) => {
-            modeler.saveXML(
-                {format: true},
-                (err, xml) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(xml)
-                    }
-                }
-            )
-        })
-    }
-
-  {/**  
+	{
+		/**  
     const handleSave = () => {
         const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
         const url = window.URL.createObjectURL(data);
@@ -111,7 +164,8 @@ function Navbar({ onReset }) {
           message.success("Todo eliminado");
         }
       };
-  */}
+  */
+	}
 
 	const fileMenu = (
 		<Menu>
