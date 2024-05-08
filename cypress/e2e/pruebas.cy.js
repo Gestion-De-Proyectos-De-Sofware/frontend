@@ -35,6 +35,9 @@ describe('ModelerCreator Component', () => {
     it('AI button', () => {
         cy.get('#js-canvas').should('exist'); // Verifica que el contenedor del lienzo exista
         cy.get('.ant-btn > span').click(); //Click en búsqueda con IA
+        cy.wait(2000)
+        cy.get('.ant-btn > span').click(); //Click en búsqueda con IA
+        cy.wait(2000)
         cy.contains('Error al realizar la búsqueda con IA').should('be.visible'); //Mensaje de error (Aún sin implementar)
 
         // Verifica que el diagrama se haya reiniciado cargando el diagramXML
