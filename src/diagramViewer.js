@@ -74,7 +74,7 @@ const BpmnView = () => {
 	return (
 		<div style={{ height: "100%" }}>
 			<div id="js-canvas" ref={containerRef} />
-			<div id="propview" />
+			<div id="propview"/>
 		</div>
 	);
 };
