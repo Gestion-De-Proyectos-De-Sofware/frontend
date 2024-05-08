@@ -91,12 +91,13 @@ function Navbar({ onReset }) {
 
 	const fileMenu = (
 		<Menu>
-			<Menu.Item key="new">{t("fileMenu.new")}</Menu.Item>
-			<Menu.Item key="save">{t("fileMenu.save")}</Menu.Item>
-			<Menu.Item key="trash">{t("fileMenu.trash")}</Menu.Item>
+			    <Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
+    			<Menu.Item key="save" id="saveItem">{t("fileMenu.save")}</Menu.Item>
+   				<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
 			<Menu.Divider />
 			<Menu.Item
 				key="history"
+				id="historyItem"
 				onClick={() => {
 					/** setMostrarHistorial(!mostrarHistorial)*/
 				}}
