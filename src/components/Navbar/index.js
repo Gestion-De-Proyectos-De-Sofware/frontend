@@ -6,6 +6,7 @@ import "./styles.css";
 import { useTranslation } from "react-i18next";
 import DropdownLang from "../Dropdown/index";
 import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
+import xmltest from "../../diagramCreator/resources/test.bpmn";
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -39,47 +40,48 @@ function Navbar({ onReset }) {
 		// );
 
 		try {
-			const xml = await getXmlFromModeler(diagramDefinitions);
-			console.log("XML obtenido con exito: ", xml);
+			// const xml = await getXmlFromModeler(diagramDefinitions);
 
-			const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. Tu tarea es analizar este diagrama y extraer de cada subproceso las historias de usuario (HU) asociadas. Para cada subproceso, proporciona una descripción detallada en formato JSON como se muestra a continuación:
+			// console.log("XML obtenido con exito: ", xml);
+
+			const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+      
+      Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
+      
+      Debes identificar al menos dos historias por cada subproceso y describirlas detalladamente. Presenta tus hallazgos en formato JSON como se muestra a continuación:
+
       {
-        "(id del subproceso)" :{
-          "name": Identifica el name del subproceso que tiene en el diagrama XML,
-          "description": Describe las actividades clave que se realizan en este subproceso,
-          "user_stories": {
-            "hu1": {
-              "description": Descripción de la historia de usuario 1
-              "ai": [SI/NO] - Justificación breve de la aplicabilidad de IA
+        "(id del subproceso)" : {
+          "name": "Nombre del subproceso según el diagrama XML",
+          "description": "Descripción de las actividades clave que se realizan en este subproceso",
+          "user_stories": [
+            {
+              "id": "hu1",
+              "description": "Descripción de la historia de usuario 1",
+              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
             },
-            "hu2": {
-              "description": Descripción de la historia de usuario 2
-              "ai": [SI/NO] - Justificación breve de la aplicabilidad de IA
+            {
+              "id": "hu2",
+              "description": "Descripción de la historia de usuario 2",
+              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
             }
-            [Continúa con todas las historias de usuario identificadas]           
-          }
-        } ,
-        "(id del subproceso)" :{
-          "name": Identifica el name del subproceso que tiene en el diagrama XML,
-          "description": Describe las actividades clave que se realizan en este subproceso,
-          "user_stories": {
-            "hu3": {
-              "description": Descripción de la historia de usuario 1
-              "ai": [SI/NO] - Justificación breve de la aplicabilidad de IA
-            },
-            "hu4": {
-              "description": Descripción de la historia de usuario 2
-              "ai": [SI/NO] - Justificación breve de la aplicabilidad de IA
-            }
-            [Continúa con todas las historias de usuario identificadas]           
-          }
-        } 
+          ]
+        },
+        [agrega el resto de subprocesos]
+        
       }
+      
       Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones, toma de decisiones o cualquier otro elemento relevante que la IA podría manejar.
 
-      Este es el diagrama en formato XML: \n${xml} 
+      Notas adicionales:
+      -El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
+      -Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
+
+      Este es el diagrama en formato XML: \n${xmltest} 
       
       `;
+
+			console.log("Enviando solicitud a GPT");
 			const response = await openai.chat.completions.create({
 				model: "gpt-3.5-turbo",
 				// prompt: prompt,
