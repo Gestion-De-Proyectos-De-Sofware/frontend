@@ -6,7 +6,7 @@ import './styles.css';
 import { useTranslation } from 'react-i18next';
 import DropdownLang from '../Dropdown/index';
 import {useDiagramDefinitions} from "../../contexts/DiagramDefinitions";
-
+import logo from '../../images/logo.png'
 const openai = new OpenAI({
     apiKey: process.env.REACT_APP_GPT_KEY,
     dangerouslyAllowBrowser: true,
@@ -132,6 +132,7 @@ function Navbar({ onReset }) {
 
 	return (
 		<div className="navbar-container">
+			<img className='logo' src={logo} alt="logo"/>
 			<div className="navbar-buttons">
 				<Dropdown
 					overlay={fileMenu}
