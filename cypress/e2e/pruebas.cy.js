@@ -37,7 +37,7 @@ describe('ModelerCreator Component', () => {
         for (let i = 0; i < 5; i++) {
           cy.get('.ant-btn > span').click(); //Click botón IA
         }        
-        cy.wait(5000)
+        cy.wait(3000)
         cy.contains('Error al realizar la búsqueda con IA').should('be.visible'); //Mensaje de error (Aún sin implementar)
 
         // Verifica que el diagrama se haya reiniciado cargando el diagramXML
