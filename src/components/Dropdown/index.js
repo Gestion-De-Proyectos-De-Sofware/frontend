@@ -14,8 +14,8 @@ const DropdownLang = ({onClick}) => {
   return (
     <div className="dropdown-container" style={{ paddingRight: '30%' }}>
       <select value={selectedOption} onChange={handleOptionChange} className="dropdown-select">
-        <option value="English">🇺🇸 English</option>
-        <option value="Spanish">🇪🇸 Spanish</option>
+        <option id="englishOption" value="English">🇺🇸 English</option>
+        <option id="spanishOption" value="Spanish">🇪🇸 Spanish</option>
       </select>
     </div>
   );

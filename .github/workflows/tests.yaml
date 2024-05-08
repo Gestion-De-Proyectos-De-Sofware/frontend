@@ -17,3 +17,5 @@ jobs:
         with:
           build: npm run build
           start: npm start
+        env:
+          REACT_APP_GPT_KEY: ${{ secrets.REACT_APP_GPT_KEY }}
