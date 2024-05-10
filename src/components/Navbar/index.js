@@ -180,27 +180,31 @@ function Navbar({ onReset }) {
 				const { value: title } = await Swal.fire({
 					title: "Guardar BPMN",
 					input: "text",
-					inputLabel: "Titutlo de tu BPMN",
+					inputLabel: "Título de tu BPMN",
 					showCancelButton: true,
 					inputValidator: (value) => {
 						if (!value) {
-							return "Escribe algun titulo!";
+							return "¡Escribe algún título!";
 						}
 					}
 				});
 				if (title) {
+					let bpmnList = JSON.parse(localStorage.getItem('bpmnList')) || [];
 					const currentDate = new Date();
-					const dataToSave = {
+					const newBPMN = {
 						title: title,
 						date: currentDate.toISOString(),
 						xml: xml
 					};
-					localStorage.setItem('bpmnData', JSON.stringify(dataToSave));
-					await Swal.fire(`Se guardo tu bpmn ${title}`);
+					bpmnList.push(newBPMN);
+
+					localStorage.setItem('bpmnList', JSON.stringify(bpmnList));
+
+					await Swal.fire(`Se guardó tu BPMN ${title}`);
 				}
 				break;
 			default:
-				console.log("No se encontro la file key: ", e.key)
+				console.log("No se encontró la file key: ", e.key)
 				break;
 		}
 	};
