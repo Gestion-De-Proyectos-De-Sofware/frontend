@@ -8,6 +8,7 @@ import DropdownLang from "../Dropdown/index";
 import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 import xmltest from "../../diagramCreator/resources/test.bpmn";
 import logo from '../../images/logo.png'
+import Swal from "sweetalert2";
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -168,10 +169,47 @@ function Navbar({ onReset }) {
   */
 	}
 
+
+
+	const handleFileMenu = async (e) => {
+		console.log('Elemento clickeado:', e.key);
+		switch (e.key) {
+			case 'save':
+				const xml = await getXmlFromModeler(diagramDefinitions);
+
+				const { value: title } = await Swal.fire({
+					title: "Guardar BPMN",
+					input: "text",
+					inputLabel: "Titutlo de tu BPMN",
+					showCancelButton: true,
+					inputValidator: (value) => {
+						if (!value) {
+							return "Escribe algun titulo!";
+						}
+					}
+				});
+				if (title) {
+					const currentDate = new Date();
+					const dataToSave = {
+						title: title,
+						date: currentDate.toISOString(),
+						xml: xml
+					};
+					localStorage.setItem('bpmnData', JSON.stringify(dataToSave));
+					await Swal.fire(`Se guardo tu bpmn ${title}`);
+				}
+				break;
+			default:
+				console.log("No se encontro la file key: ", e.key)
+				break;
+		}
+	};
+
 	const fileMenu = (
-		<Menu>
+		<Menu onClick={handleFileMenu}>
 			    <Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
-    			<Menu.Item key="save" id="saveItem">{t("fileMenu.save")}</Menu.Item>
+    			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}
+				</Menu.Item>
    				<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
 			<Menu.Divider />
 			<Menu.Item
