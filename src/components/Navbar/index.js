@@ -178,13 +178,13 @@ function Navbar({ onReset }) {
 				const xml = await getXmlFromModeler(diagramDefinitions);
 
 				const { value: title } = await Swal.fire({
-					title: "Guardar BPMN",
+					title: t("dialogMessages.title"),
 					input: "text",
-					inputLabel: "Título de tu BPMN",
+					inputLabel: t("dialogMessages.inputLabel"),
 					showCancelButton: true,
 					inputValidator: (value) => {
 						if (!value) {
-							return "¡Escribe algún título!";
+							return t("dialogMessages.titleReq");
 						}
 					}
 				});
@@ -200,7 +200,7 @@ function Navbar({ onReset }) {
 
 					localStorage.setItem('bpmnList', JSON.stringify(bpmnList));
 
-					await Swal.fire(`Se guardó tu BPMN ${title}`);
+					await Swal.fire(`${t("dialogMessages.saveSuccess")} ${title}`);
 				}
 				break;
 			default:

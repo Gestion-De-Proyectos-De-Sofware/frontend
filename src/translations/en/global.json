@@ -2,6 +2,12 @@
     "header":{
         "messageSuccess": "Search with AI"
     },
+    "dialogMessages": {
+        "title": "Save BPMN",
+        "inputLabel": "BPMN title",
+        "saveSuccess": "BPMN saved",
+        "titleReq": "¡Write a title!"
+    },
     "fileMenu":{
         "new": "New",
         "save": "Save",

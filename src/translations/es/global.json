@@ -8,6 +8,12 @@
         "trash": "Mover a la papelera",
         "history": "Historial"
     },
+    "dialogMessages": {
+        "title": "Guardar BPMN",
+        "inputLabel": "Título de tu BPMN",
+        "saveSuccess": "Se guardó tu BPMN",
+        "titleReq": "¡Escribe algún título!"
+    },
     "body":{
         "buttonFileName": "Archivo",
         "buttonSearchIA": "Busqueda con IA"
