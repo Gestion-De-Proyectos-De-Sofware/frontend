@@ -55,11 +55,8 @@ function Navbar({ onReset }) {
 			customClass: 'swal-aisent',
 		});
 		let xml = await getXmlFromModeler(diagramDefinitions); // Obtain current xml
-		const xmlsize = xml.length;
 		let data; //Answer Object
-		if (xmlsize <= 16385){ 
-			try {
-				const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
 		
 		Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
 		
@@ -95,6 +92,11 @@ function Navbar({ onReset }) {
 		Este es el diagrama en formato XML: \n${xml} 
 		
 		`;
+		const numTokens = prompt.length / 2.1
+		console.log(numTokens)
+		console.log(xml)
+		if (numTokens <= 16385){ 
+			try {
 				console.log("Enviando solicitud a GPT");
 				const response = await openai.chat.completions.create({
 					model: "gpt-3.5-turbo",
