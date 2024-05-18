@@ -18,7 +18,24 @@ const openai = new OpenAI({
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions } = useDiagramDefinitions();
-	
+
+	const colorAI = (yesIds, noIds) => { //Color function
+		var elementRegistry = diagramDefinitions.get('elementRegistry') // Get IDs
+		var modeling = diagramDefinitions.get('modeling'); // Modeling with the functions of color (and other)
+		yesIds.forEach(element => {
+			modeling.setColor(elementRegistry.get(element),{
+				stroke: 'black',
+				fill: 'green'
+			});
+		});
+		noIds.forEach(element => {
+			modeling.setColor(elementRegistry.get(element),{
+				stroke: 'black',
+				fill: 'red'
+			});
+		});
+	}
+
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
 		if (lang == "English") {
@@ -29,113 +46,132 @@ function Navbar({ onReset }) {
 	};
 
 	const handleAI = async () => {
-		console.log("debugging definitions: ", diagramDefinitions);
-		var elementRegistry = diagramDefinitions.get('elementRegistry') // Get IDs
-		var modeling = diagramDefinitions.get('modeling'); // Modeling with the functions of color (and other)
-		let xml = await getXmlFromModeler(diagramDefinitions); // Obtener xml actual para enviar en la petición
-		let data;
-		try {
-			const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
-      
-      Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
-      
-      Debes identificar al menos dos historias por cada subproceso y describirlas detalladamente. Presenta tus hallazgos en formato JSON como se muestra a continuación:
+		Swal.fire({
+			toast: true,
+			position: "top-end",
+			title: t("sweetalert.bpmnsent"),
+			showConfirmButton: false,
+			icon: "success",
+			customClass: 'swal-aisent',
+		});
+		let xml = await getXmlFromModeler(diagramDefinitions); // Obtain current xml
+		const xmlsize = xml.length;
+		let data; //Answer Object
+		if (xmlsize <= 16385){ 
+			try {
+				const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+		
+		Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
+		
+		Debes identificar al menos dos historias por cada subproceso y describirlas detalladamente. Presenta tus hallazgos en formato JSON como se muestra a continuación:
 
-      {
-        "(id del subproceso)" : {
-          "name": "Nombre del subproceso según el diagrama XML",
-          "description": "Descripción de las actividades clave que se realizan en este subproceso",
-          "user_stories": [
-            {
-              "id": "hu1",
-              "description": "Descripción de la historia de usuario 1",
-              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
-            },
-            {
-              "id": "hu2",
-              "description": "Descripción de la historia de usuario 2",
-              "ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
-            }
-          ]
-        },
-        [agrega el resto de subprocesos]
-        
-      }
-      
-      Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones, toma de decisiones o cualquier otro elemento relevante que la IA podría manejar.
-
-      Notas adicionales:
-      -El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
-      -Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
-
-      Este es el diagrama en formato XML: \n${xml} 
-      
-      `;
-			console.log("Enviando solicitud a GPT");
-			const response = await openai.chat.completions.create({
-				model: "gpt-3.5-turbo",
-				// prompt: prompt,
-				// max_tokens: 50,
-				temperature: 0.5,
-				messages: [
-					{
-						content: prompt,
-						role: "user",
-					},
-				],
-			});
-			console.log("RESPUESTA");
-			data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
-			console.log(JSON.stringify(data));
-			console.log(data); //Objeto con la respuesta para trabajar
-		} catch (error) {
-			console.error("Error al conectar con la IA", error);
-			if (error.response) {
-				console.log("Datos de la respuesta:", error.response.data);
-				console.log("Estado de la respuesta:", error.response.status);
-			} else if (error.request) {
-				console.log("Petición hecha sin respuesta", error.request);
-			} else {
-				console.log("Error", error.message);
-			}
-			message.error("Error al realizar la búsqueda con IA");
+		{
+			"(id del subproceso)" : {
+			"name": "Nombre del subproceso según el diagrama XML",
+			"description": "Descripción de las actividades clave que se realizan en este subproceso",
+			"user_stories": [
+				{
+				"id": "hu1",
+				"description": "Descripción de la historia de usuario 1",
+				"ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
+				},
+				{
+				"id": "hu2",
+				"description": "Descripción de la historia de usuario 2",
+				"ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
+				}
+			]
+			},
+			[agrega el resto de subprocesos]
+			
 		}
-		//Todos los id disponibles en el bpm
-		const BpmnIds = Object.keys(data);
-		//Todos los objetos pertenecientes a cada id
-		const BpmnValues = Object.values(data);
-		// Ve poco a poco por la lista de bpmn values
-		const { yesIds, noIds } = BpmnValues.reduce((acc, value, index) => {
-			//Accede a la propiedad de user stories de cada id
-			const userStories = value.user_stories;
-			const id = BpmnIds[index];
-			//Si alguna tiene un sí -se puede hacer con ia- incluyala en yesIds, si no, en noIds
-			const hasYes = userStories.some(story => story.ai.substring(0, 2) === "SI");
-			if (hasYes) {
-			  acc.yesIds.push(id);
-			} else {
-			  acc.noIds.push(id);
+		
+		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones, toma de decisiones o cualquier otro elemento relevante que la IA podría manejar.
+
+		Notas adicionales:
+		-El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
+		-Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
+
+		Este es el diagrama en formato XML: \n${xml} 
+		
+		`;
+				console.log("Enviando solicitud a GPT");
+				const response = await openai.chat.completions.create({
+					model: "gpt-3.5-turbo",
+					// prompt: prompt,
+					// max_tokens: 50,
+					temperature: 0.5,
+					messages: [
+						{
+							content: prompt,
+							role: "user",
+						},
+					],
+				});
+				console.log("RESPUESTA");
+				data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
+				console.log(JSON.stringify(data));
+				console.log(data);
+				Swal.close();
+				Swal.fire({
+					toast: true,
+					position: "top-end",
+					title: t("sweetalert.bpmnsucess"),
+					showConfirmButton: false,
+					icon: "success",
+					timer: 2000,
+					customClass: 'swal-aisent',
+					timerProgressBar: true,
+				});
+				const BpmnIds = Object.keys(data);		//Every Id on the BPMN
+				const BpmnValues = Object.values(data); //Every object related to the Ids
+				const { yesIds, noIds } = BpmnValues.reduce((acc, value, index) => { // Go object to object into the BpmnValues list
+					const userStories = value.user_stories; //Access user_stories property of every ID
+					const id = BpmnIds[index]; 	//If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
+					const hasYes = userStories.some(story => story.ai.substring(0, 2) === "SI");
+					if (hasYes) {
+					acc.yesIds.push(id);
+					} else {
+					acc.noIds.push(id);
+					}
+					return acc;
+				}, { yesIds: [], noIds: [] }); //Variables initialized
+				colorAI(yesIds,noIds);
+			} catch (error) {
+				console.error("Error al conectar con la IA", error);
+				if (error.response) {
+					console.log("Datos de la respuesta:", error.response.data);
+					console.log("Estado de la respuesta:", error.response.status);
+				} else if (error.request) {
+					console.log("Petición hecha sin respuesta", error.request);
+				} else {
+					console.log("Error", error.message);
+				}
+				Swal.close();
+				Swal.fire({
+					toast: true,
+					position: "top-end",
+					title: t("sweetalert.bpmnerror"),
+					showConfirmButton: false,
+					icon: "error",
+					timer: 2000,
+					customClass: 'swal-aisent',
+					timerProgressBar: true,
+				});
 			}
-			return acc;
-		  }, { yesIds: [], noIds: [] }); //Empiece con las variables vacias
-		console.log("Soy los si", yesIds)
-		console.log("Soy los no", noIds)
-		//Funcion colorear
-		const colorAI = (yesIds, noIds) => {
-			yesIds.forEach(element => {
-				modeling.setColor(elementRegistry.get(element),{
-					stroke: 'black',
-					fill: 'green'
-				});
-			});
-			noIds.forEach(element => {
-				modeling.setColor(elementRegistry.get(element),{
-					stroke: 'black',
-					fill: 'red'
-				});
+		}
+		else{
+			Swal.fire({
+				toast: true,
+				position: "top-end",
+				title: t("sweetalert.bpmnsizeerror"),
+				showConfirmButton: false,
+				icon: "error",
+				timer: 2000,
+				customClass: 'swal-aisent',
+				timerProgressBar: true,
 			});
 		}
-		colorAI(yesIds,noIds);
 	};
 
 
