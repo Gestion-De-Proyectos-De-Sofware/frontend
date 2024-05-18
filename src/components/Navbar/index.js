@@ -18,7 +18,7 @@ const openai = new OpenAI({
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions } = useDiagramDefinitions();
-
+	
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
 		if (lang == "English") {
@@ -30,22 +30,11 @@ function Navbar({ onReset }) {
 
 	const handleAI = async () => {
 		console.log("debugging definitions: ", diagramDefinitions);
-		// console.log(
-		// 	"getting xml from modeler: ",
-		// 	getXmlFromModeler(diagramDefinitions)
-		// 		.then((xml) => {
-		// 			console.log("xml obtenido con exito: ", xml);
-		// 		})
-		// 		.catch((error) => {
-		// 			console.error("Error obteniendo definiciones del diagrama:", error);
-		// 		})
-		// );
-
+		var elementRegistry = diagramDefinitions.get('elementRegistry') // Get IDs
+		var modeling = diagramDefinitions.get('modeling'); // Modeling with the functions of color (and other)
+		let xml = await getXmlFromModeler(diagramDefinitions); // Obtener xml actual para enviar en la petición
+		let data;
 		try {
-			// const xml = await getXmlFromModeler(diagramDefinitions);
-
-			// console.log("XML obtenido con exito: ", xml);
-
 			const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
       
       Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
@@ -79,10 +68,9 @@ function Navbar({ onReset }) {
       -El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
       -Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
 
-      Este es el diagrama en formato XML: \n${xmltest} 
+      Este es el diagrama en formato XML: \n${xml} 
       
       `;
-
 			console.log("Enviando solicitud a GPT");
 			const response = await openai.chat.completions.create({
 				model: "gpt-3.5-turbo",
@@ -96,15 +84,10 @@ function Navbar({ onReset }) {
 					},
 				],
 			});
-
 			console.log("RESPUESTA");
-			// console.log(response.choices);
-			const data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
+			data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
 			console.log(JSON.stringify(data));
-			console.log(data);
-			// console.log("Respuesta de IA:", response.data.choices[0].text.trim());
-			// console.log("Sugerencia de IA:", suggestion);
-			// message.success("Mejores resultados con IA obtenidos");
+			console.log(data); //Objeto con la respuesta para trabajar
 		} catch (error) {
 			console.error("Error al conectar con la IA", error);
 			if (error.response) {
@@ -117,7 +100,44 @@ function Navbar({ onReset }) {
 			}
 			message.error("Error al realizar la búsqueda con IA");
 		}
+		//Todos los id disponibles en el bpm
+		const BpmnIds = Object.keys(data);
+		//Todos los objetos pertenecientes a cada id
+		const BpmnValues = Object.values(data);
+		// Ve poco a poco por la lista de bpmn values
+		const { yesIds, noIds } = BpmnValues.reduce((acc, value, index) => {
+			//Accede a la propiedad de user stories de cada id
+			const userStories = value.user_stories;
+			const id = BpmnIds[index];
+			//Si alguna tiene un sí -se puede hacer con ia- incluyala en yesIds, si no, en noIds
+			const hasYes = userStories.some(story => story.ai.substring(0, 2) === "SI");
+			if (hasYes) {
+			  acc.yesIds.push(id);
+			} else {
+			  acc.noIds.push(id);
+			}
+			return acc;
+		  }, { yesIds: [], noIds: [] }); //Empiece con las variables vacias
+		console.log("Soy los si", yesIds)
+		console.log("Soy los no", noIds)
+		//Funcion colorear
+		const colorAI = (yesIds, noIds) => {
+			yesIds.forEach(element => {
+				modeling.setColor(elementRegistry.get(element),{
+					stroke: 'black',
+					fill: 'green'
+				});
+			});
+			noIds.forEach(element => {
+				modeling.setColor(elementRegistry.get(element),{
+					stroke: 'black',
+					fill: 'red'
+				});
+			});
+		}
+		colorAI(yesIds,noIds);
 	};
+
 
 	function getXmlFromModeler(modeler) {
 		return new Promise((resolve, reject) => {
