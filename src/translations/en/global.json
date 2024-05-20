@@ -9,6 +9,7 @@
         "history": "History"
     },
     "body":{
+        "buttonExport": "Export",
         "buttonFileName": "File",
         "buttonSearchIA": "Search with AI"
     },

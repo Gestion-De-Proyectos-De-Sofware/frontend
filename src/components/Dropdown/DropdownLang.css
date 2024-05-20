@@ -1,22 +1,39 @@
 /* DropdownLang.css */
 
-.dropdown-container {
-    width: 100px;
-    margin: 2px;
-  }
-  
-  .dropdown-select {
+.ant-dropdown-link {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 2%;
 
-    padding: 4px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .dropdown-select:focus {
-    outline: none;
-    border-color: #007bff; /* Change border color when focused */
-  }
-  
+}
+
+.ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+}
+
+.ant-dropdown-menu-item .flag-icon {
+  margin-right: 2px;
+  width: 20px;
+  height: 15px;
+  align-items: center;
+}
+
+.flag-icon {
+  margin-right: 2px;
+  width: 20px;
+  height: 15px;
+  align-items: center;
+}
+
+
+.ant-dropdown-link:hover {
+  color: #ffffff !important;
+  background-color: transparent !important;
+}
