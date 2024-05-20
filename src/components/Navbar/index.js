@@ -168,13 +168,26 @@ function Navbar({ onReset }) {
   */
 	}
 
+	const handleExportImage = () => {
+		// const canvas = document.querySelector("canvas");
+		// if (canvas) {
+		//   canvas.toBlob((blob) => {
+		//     const url = URL.createObjectURL(blob);
+		//     const link = document.createElement("a");
+		//     link.href = url;
+		//     link.download = "diagram.png";
+		//     link.click();
+		//     URL.revokeObjectURL(url);
+		//     message.success("Imagen exportada con éxito");
+		//   });
+		// }
+	  };
+
 	const fileMenu = (
 		<Menu>
 			    <Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
     			<Menu.Item key="save" id="saveItem">{t("fileMenu.save")}</Menu.Item>
-   				<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
-			<Menu.Divider />
-			<Menu.Item
+				<Menu.Item
 				key="history"
 				id="historyItem"
 				onClick={() => {
@@ -183,12 +196,21 @@ function Navbar({ onReset }) {
 			>
 				{t("fileMenu.history")}
 			</Menu.Item>
+			<Menu.Divider />
+			<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
 		</Menu>
 	);
 
+
 	return (
 		<div className="navbar-container">
-			<img className='logo' src={logo} alt="logo"/>
+			 <div className="logo-title">
+				<img className='logo' src={logo} alt="logo"/>
+				<div className="title">{t("IdentiAI")}</div>
+			</div>
+			<Button className="navbar-button-export" onClick={handleExportImage}>
+				<span className="navbar-container">{t("body.buttonExport")}</span>
+      		</Button>
 			<div className="navbar-buttons">
 				<Dropdown
 					overlay={fileMenu}
