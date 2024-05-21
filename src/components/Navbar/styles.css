@@ -23,6 +23,14 @@
     }
 }
 
+.swal-aisent{
+    height: auto !important;
+    display: flex !important;
+    width: auto !important;
+    padding: .6em 1em !important;
+}
+
+
 .navbar-container {
     display: flex;
     justify-content: flex-start;

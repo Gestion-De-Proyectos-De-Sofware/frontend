@@ -2,6 +2,12 @@
     "header":{
         "messageSuccess": "Search with AI"
     },
+    "dialogMessages": {
+        "title": "Save BPMN",
+        "inputLabel": "BPMN title",
+        "saveSuccess": "BPMN saved",
+        "titleReq": "¡Write a title!"
+    },
     "fileMenu":{
         "new": "New",
         "save": "Save",
@@ -15,5 +21,11 @@
     },
     "prompts":{
         "window": "Are you sure to delete what you made and create a new canvas?"
+    },
+    "sweetalert":{
+        "bpmnsent" : "Analyzing BPMN...",
+        "bpmnsucess": "Analysis completed",
+        "bpmnerror": "There was an error during the analysis",
+        "bpmnsizeerror": "BPM is too large, please reduce it and try again"
     }
 }
