@@ -15,10 +15,12 @@
         "camunda-bpmn-moddle": "4.1.2",
         "camunda-dmn-moddle": "1.0.0",
         "i18next": "^23.11.2",
+        "openai": "^4.42.0",
         "react": "^18.0.0",
         "react-dom": "^18.2.0",
         "react-i18next": "^14.1.1",
-        "react-scripts": "^5.0.1"
+        "react-scripts": "^5.0.1",
+        "react-select": "^5.8.0"
     },
     "scripts": {
         "start": "react-scripts start",

@@ -9,6 +9,7 @@
         "history": "Historial"
     },
     "body":{
+        "buttonExport": "Exportar imagen",
         "buttonFileName": "Archivo",
         "buttonSearchIA": "Busqueda con IA"
     },
