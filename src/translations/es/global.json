@@ -15,6 +15,7 @@
         "titleReq": "¡Escribe algún título!"
     },
     "body":{
+        "buttonExport": "Exportar imagen",
         "buttonFileName": "Archivo",
         "buttonSearchIA": "Busqueda con IA"
     },
