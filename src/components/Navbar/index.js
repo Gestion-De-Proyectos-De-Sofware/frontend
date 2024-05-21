@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Menu, Dropdown, Button, message } from "antd";
 import { OpenAI } from "openai";
 import { DownOutlined } from "@ant-design/icons";
@@ -9,6 +9,9 @@ import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 import xmltest from "../../diagramCreator/resources/test.bpmn";
 import logo from '../../images/logo.png'
 import Swal from "sweetalert2";
+import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
+import Sidebar from "./sidebar";
+
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -17,19 +20,19 @@ const openai = new OpenAI({
 
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
-	const { diagramDefinitions } = useDiagramDefinitions();
+	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
 
 	const colorAI = (yesIds, noIds) => { //Color function
 		var elementRegistry = diagramDefinitions.get('elementRegistry') // Get IDs
 		var modeling = diagramDefinitions.get('modeling'); // Modeling with the functions of color (and other)
 		yesIds.forEach(element => {
-			modeling.setColor(elementRegistry.get(element),{
+			modeling.setColor(elementRegistry.get(element), {
 				stroke: 'black',
 				fill: 'green'
 			});
 		});
 		noIds.forEach(element => {
-			modeling.setColor(elementRegistry.get(element),{
+			modeling.setColor(elementRegistry.get(element), {
 				stroke: 'black',
 				fill: 'red'
 			});
@@ -93,7 +96,7 @@ function Navbar({ onReset }) {
 		
 		`;
 		const numTokens = prompt.length / 2.1
-		if (numTokens <= 16385){ 
+		if (numTokens <= 16385) {
 			try {
 				console.log("Enviando solicitud a GPT");
 				const response = await openai.chat.completions.create({
@@ -128,13 +131,13 @@ function Navbar({ onReset }) {
 					const id = BpmnIds[index]; 	//If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
 					const hasYes = userStories.some(story => story.ai.substring(0, 2) === "SI");
 					if (hasYes) {
-					acc.yesIds.push(id);
+						acc.yesIds.push(id);
 					} else {
-					acc.noIds.push(id);
+						acc.noIds.push(id);
 					}
 					return acc;
 				}, { yesIds: [], noIds: [] }); //Variables initialized
-				colorAI(yesIds,noIds);
+				colorAI(yesIds, noIds);
 			} catch (error) {
 				console.error("Error al conectar con la IA", error);
 				if (error.response) {
@@ -158,7 +161,7 @@ function Navbar({ onReset }) {
 				});
 			}
 		}
-		else{
+		else {
 			Swal.fire({
 				toast: true,
 				position: "top-end",
@@ -187,39 +190,39 @@ function Navbar({ onReset }) {
 
 	{
 		/**  
-    const handleSave = () => {
-        const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(data);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'archivo_guardado.txt';
-        link.click();
-        window.URL.revokeObjectURL(url);
-        message.success("Archivo guardado localmente");
-      };
+	const handleSave = () => {
+		const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
+		const url = window.URL.createObjectURL(data);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = 'archivo_guardado.txt';
+		link.click();
+		window.URL.revokeObjectURL(url);
+		message.success("Archivo guardado localmente");
+	  };
 
-    const handleNew = () => {
-        if (window.confirm("¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?")) {
-          // Aquí agregas la lógica para borrar el trabajo actual y empezar uno nuevo
-          console.log("Lienzo nuevo creado");
-          message.success("Lienzo nuevo creado");
-        }
-      };
+	const handleNew = () => {
+		if (window.confirm("¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?")) {
+		  // Aquí agregas la lógica para borrar el trabajo actual y empezar uno nuevo
+		  console.log("Lienzo nuevo creado");
+		  message.success("Lienzo nuevo creado");
+		}
+	  };
     
     
-      const handleDuplicate = () => {
-        // Aquí agregas la lógica para duplicar el contenido actual
-        console.log("Contenido duplicado");
-        message.success("Contenido duplicado");
-      };
+	  const handleDuplicate = () => {
+		// Aquí agregas la lógica para duplicar el contenido actual
+		console.log("Contenido duplicado");
+		message.success("Contenido duplicado");
+	  };
     
-      const handleTrash = () => {
-        if (window.confirm("¿Está seguro de eliminar todo lo realizado?")) {
-          // Aquí agregas la lógica para borrar todo el trabajo realizado
-          console.log("Todo eliminado");
-          message.success("Todo eliminado");
-        }
-      };
+	  const handleTrash = () => {
+		if (window.confirm("¿Está seguro de eliminar todo lo realizado?")) {
+		  // Aquí agregas la lógica para borrar todo el trabajo realizado
+		  console.log("Todo eliminado");
+		  message.success("Todo eliminado");
+		}
+	  };
   */
 	}
 
@@ -236,7 +239,7 @@ function Navbar({ onReset }) {
 		//     message.success("Imagen exportada con éxito");
 		//   });
 		// }
-	  };
+	};
 
 
 	const handleFileMenu = async (e) => {
@@ -278,10 +281,10 @@ function Navbar({ onReset }) {
 
 	const fileMenu = (
 		<Menu onClick={handleFileMenu}>
-			    <Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
-    			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}
-				</Menu.Item>
-   				<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
+			<Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
+			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}
+			</Menu.Item>
+			<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
 			<Menu.Divider />
 			<Menu.Item
 				key="history"
@@ -300,11 +303,17 @@ function Navbar({ onReset }) {
 
 	return (
 		<div className="navbar-container">
-			 <div className="logo-title">
-				<img className='logo' src={logo} alt="logo"/>
+			<Button
+				icon={<MenuOutlined />}
+				onClick={() => setSidebarVisible(true)}
+				className="sidebar-button"
+			/>
+			<div className="logo-title">
+				<img className='logo' src={logo} alt="logo" />
 				<div className="title">{t("IdentiAI")}</div>
 			</div>
 			<div className="navbar-buttons">
+
 				<Dropdown
 					overlay={fileMenu}
 					className="navbar-dropdown"
@@ -316,11 +325,12 @@ function Navbar({ onReset }) {
 			</div>
 			<Button className="navbar-button-export" onClick={handleExportImage}>
 				<span className="navbar-container">{t("body.buttonExport")}</span>
-      		</Button>
+			</Button>
 			<Button className="navbar-button-IA" onClick={handleAI}>
 				{t("body.buttonSearchIA")}
 			</Button>
 			<DropdownLang onClick={handleChangeLanguage}></DropdownLang>
+			<Sidebar visible={sidebarVisible} onClose={() => setSidebarVisible(false)} />
 		</div>
 	);
 }
