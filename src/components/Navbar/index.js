@@ -93,8 +93,6 @@ function Navbar({ onReset }) {
 		
 		`;
 		const numTokens = prompt.length / 2.1
-		console.log(numTokens)
-		console.log(xml)
 		if (numTokens <= 16385){ 
 			try {
 				console.log("Enviando solicitud a GPT");
@@ -112,8 +110,6 @@ function Navbar({ onReset }) {
 				});
 				console.log("RESPUESTA");
 				data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
-				console.log(JSON.stringify(data));
-				console.log(data);
 				Swal.close();
 				Swal.fire({
 					toast: true,
@@ -230,7 +226,6 @@ function Navbar({ onReset }) {
 
 
 	const handleFileMenu = async (e) => {
-		console.log('Elemento clickeado:', e.key);
 		switch (e.key) {
 			case 'save':
 				const xml = await getXmlFromModeler(diagramDefinitions);
