@@ -29,6 +29,7 @@ const BpmnView = () => {
 			moddleExtensions: {
 				camunda: camundaModdleDescriptor,
 			},
+			
 		});
 
 		const importXML = (xml, Viewer) => {
