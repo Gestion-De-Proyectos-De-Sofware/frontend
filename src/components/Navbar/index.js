@@ -208,9 +208,6 @@ function Navbar({ onReset }) {
 				<img className='logo' src={logo} alt="logo"/>
 				<div className="title">{t("IdentiAI")}</div>
 			</div>
-			<Button className="navbar-button-export" onClick={handleExportImage}>
-				<span className="navbar-container">{t("body.buttonExport")}</span>
-      		</Button>
 			<div className="navbar-buttons">
 				<Dropdown
 					overlay={fileMenu}
@@ -221,6 +218,9 @@ function Navbar({ onReset }) {
 					<span className="navbar-button">{t("body.buttonFileName")}</span>
 				</Dropdown>
 			</div>
+			<Button className="navbar-button-export" onClick={handleExportImage}>
+				<span className="navbar-container">{t("body.buttonExport")}</span>
+      		</Button>
 			<Button className="navbar-button-IA" onClick={handleAI}>
 				{t("body.buttonSearchIA")}
 			</Button>
