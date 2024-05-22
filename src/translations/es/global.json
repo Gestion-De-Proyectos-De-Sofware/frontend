@@ -4,15 +4,28 @@
     },
     "fileMenu":{
         "new": "Nuevo",
-        "save": "guardar",
+        "save": "Guardar",
         "trash": "Mover a la papelera",
         "history": "Historial"
     },
+    "dialogMessages": {
+        "title": "Guardar BPMN",
+        "inputLabel": "Título de tu BPMN",
+        "saveSuccess": "Se guardó tu BPMN",
+        "titleReq": "¡Escribe algún título!"
+    },
     "body":{
+        "buttonExport": "Exportar imagen",
         "buttonFileName": "Archivo",
         "buttonSearchIA": "Busqueda con IA"
     },
     "prompts":{
         "window": "¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?"
+    },
+    "sweetalert":{
+        "bpmnsent" : "Analizando BPMN...",
+        "bpmnsucess" : "Analisis completado",
+        "bpmnerror": "Hubo un error durante el analisis",
+        "bpmnsizeerror": "El BPM es demasiado grande, por favor reducirlo e intentar de nuevo"
     }
 }

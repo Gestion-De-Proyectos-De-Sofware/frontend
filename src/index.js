@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import Navbar from './components/Navbar';
 import BpmnView from "./diagramViewer";
@@ -27,14 +27,15 @@ i18next.init({
 
 
 function App() {
+  const [sharedVariable, setSharedVariable] = useState('');
   return (
     <div className="App">
       <DiagramDefinitionsProvider>
-          <Navbar />
+          <Navbar sharedVariable={sharedVariable} setSharedVariable={setSharedVariable}/>
           {/** This is for viewer only
           https://stackoverflow.com/questions/42708361/integrating-bpmn-js-to-modeler-the-react-component
           */}
-          <BpmnView />
+          <BpmnView sharedVariable={sharedVariable} setSharedVariable={setSharedVariable}/>
           {/** This is for Model creator
           Comment out the nextblock will reveal the above Viewer
           */}
