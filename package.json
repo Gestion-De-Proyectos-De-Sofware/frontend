@@ -1,47 +1,49 @@
 {
-    "name": "react-with-bpmn-js",
-    "version": "1.0.0",
-    "description": "",
-    "keywords": [],
-    "main": "src/index.js",
-    "dependencies": {
-        "@ant-design/icons": "^5.3.7",
-        "@emotion/react": "^11.11.4",
-        "@emotion/styled": "^11.11.5",
-        "@mui/material": "^5.15.15",
-        "antd": "^5.16.2",
-        "bpmn-font": "0.9.3",
-        "bpmn-js": "3.1.0",
-        "bpmn-js-properties-panel": "0.32.1",
-        "camunda-bpmn-moddle": "4.1.2",
-        "camunda-dmn-moddle": "1.0.0",
-        "i18next": "^23.11.2",
-        "openai": "^4.42.0",
-        "react": "^18.0.0",
-        "react-dom": "^18.2.0",
-        "react-i18next": "^14.1.1",
-        "react-scripts": "^5.0.1",
-        "react-select": "^5.8.0",
-        "sweetalert2": "^11.10.8"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "eject": "react-scripts eject"
-    },
-    "browserslist": [
-        ">0.2%",
-        "not dead",
-        "not ie <= 11",
-        "not op_mini all"
-    ],
-    "devDependencies": {
-        "@babel/plugin-transform-modules-commonjs": "^7.24.1",
-        "@babel/preset-react": "^7.24.1",
-        "cypress": "^13.8.1"
-    },
-    "jest": {
-        "transform": {}
-    }
+	"name": "react-with-bpmn-js",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"main": "src/index.js",
+	"dependencies": {
+		"@ant-design/icons": "^5.3.7",
+		"@ctrl/tinycolor": "^4.1.0",
+		"@emotion/react": "^11.11.4",
+		"@emotion/styled": "^11.11.5",
+		"@mui/material": "^5.15.15",
+		"antd": "^5.16.2",
+		"bpmn-font": "0.9.3",
+		"bpmn-js": "3.1.0",
+		"bpmn-js-properties-panel": "0.32.1",
+		"camunda-bpmn-moddle": "4.1.2",
+		"camunda-dmn-moddle": "1.0.0",
+		"i18next": "^23.11.2",
+		"openai": "^4.42.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.2.0",
+		"react-i18next": "^14.1.1",
+		"react-scripts": "^5.0.1",
+		"react-select": "^5.8.0",
+		"styled-components": "^6.1.11",
+		"sweetalert2": "^11.10.8"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+		"eject": "react-scripts eject"
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	],
+	"devDependencies": {
+		"@babel/plugin-transform-modules-commonjs": "^7.24.1",
+		"@babel/preset-react": "^7.24.1",
+		"cypress": "^13.8.1"
+	},
+	"jest": {
+		"transform": {}
+	}
 }

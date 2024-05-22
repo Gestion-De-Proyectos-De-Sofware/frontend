@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Menu, Dropdown, Button, message } from "antd";
+import { Menu, Dropdown, Button, message, ConfigProvider } from "antd";
 import { OpenAI } from "openai";
-import { DownOutlined } from "@ant-design/icons";
+import { TinyColor } from "@ctrl/tinycolor";
 import "./styles.css";
 import { useTranslation } from "react-i18next";
 import DropdownLang from "./Dropdown/index";
@@ -11,6 +11,7 @@ import logo from "../../images/logo.png";
 import Swal from "sweetalert2";
 import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
 import Sidebar from "./sidebar";
+import styled from "styled-components";
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -30,6 +31,33 @@ async function removeBpmndiSection(xml) {
 
 	return xml;
 }
+
+const colors1 = ["#11B0CA", "#0B5F6D"];
+const getHoverColors = (colors) =>
+	colors.map((color) => new TinyColor(color).lighten(5).toString());
+const getActiveColors = (colors) =>
+	colors.map((color) => new TinyColor(color).darken(5).toString());
+
+const GradientButton = styled(Button)`
+	background-color: #0e4690;
+	border: none;
+	padding: 10px 20px;
+	font-size: 16px;
+	font-weight: bold;
+	font-style: oblique;
+	cursor: pointer;
+	transition: background 0.3s ease !important;
+
+	&:hover {
+		background: linear-gradient(135deg, ${getHoverColors(colors1).join(", ")}) !important;
+		color: white !important;
+		transition: background 0.4s ease !important;
+	}
+	&:active {
+		background: linear-gradient(135deg, ${getActiveColors(colors1).join(", ")}) !important;
+		color: white !important;
+	}
+`;
 
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
@@ -485,9 +513,9 @@ function Navbar({ onReset }) {
 			<Button className="navbar-button-export" onClick={handleExportImage}>
 				<span className="navbar-container">{t("body.buttonExport")}</span>
 			</Button>
-			<Button className="navbar-button-IA" onClick={handleAI}>
+			<GradientButton className="navbar-button-IA" onClick={handleAI}>
 				{t("body.buttonSearchIA")}
-			</Button>
+			</GradientButton>
 			<DropdownLang onClick={handleChangeLanguage}></DropdownLang>
 			<Sidebar visible={sidebarVisible} onClose={() => setSidebarVisible(false)} />
 		</div>
