@@ -6,12 +6,12 @@ import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/camunda";
 import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css";
 import camundaModdleDescriptor from "camunda-bpmn-moddle/resources/camunda";
-import {useDiagramDefinitions} from "./contexts/DiagramDefinitions";
+import { useDiagramDefinitions } from "./contexts/DiagramDefinitions";
 
 const BpmnView = () => {
 	const containerRef = useRef(null);
 	const viewerRef = useRef(null);
-	const { setDiagramDefinitions} = useDiagramDefinitions();
+	const { setDiagramDefinitions } = useDiagramDefinitions();
 	const handleElementChanged = (event) => {
 		console.log("Elemento cambiado:", event.element);
 		setDiagramDefinitions(viewerRef.current);
@@ -29,7 +29,6 @@ const BpmnView = () => {
 			moddleExtensions: {
 				camunda: camundaModdleDescriptor,
 			},
-			
 		});
 
 		const importXML = (xml, Viewer) => {
@@ -54,7 +53,7 @@ const BpmnView = () => {
 				});
 
 				canvas.addMarker("SCAN_OK", "needs-discussion");
-				setDiagramDefinitions(viewerRef.current)
+				setDiagramDefinitions(viewerRef.current);
 				viewerRef.current.on("element.changed", handleElementChanged);
 			});
 		};
@@ -75,7 +74,7 @@ const BpmnView = () => {
 	return (
 		<div style={{ height: "100%" }}>
 			<div id="js-canvas" ref={containerRef} />
-			<div id="propview"/>
+			<div id="propview" />
 		</div>
 	);
 };
