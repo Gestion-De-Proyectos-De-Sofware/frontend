@@ -1,0 +1,39 @@
+/* DropdownLang.css */
+
+.ant-dropdown-link {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 2%;
+
+}
+
+.ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+}
+
+.ant-dropdown-menu-item .flag-icon {
+  margin-right: 2px;
+  width: 20px;
+  height: 15px;
+  align-items: center;
+}
+
+.flag-icon {
+  margin-right: 2px;
+  width: 20px;
+  height: 15px;
+  align-items: center;
+}
+
+
+.ant-dropdown-link:hover {
+  color: #ffffff !important;
+  background-color: transparent !important;
+}
