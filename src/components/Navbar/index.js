@@ -7,38 +7,52 @@ import { useTranslation } from "react-i18next";
 import DropdownLang from "./Dropdown/index";
 import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 import xmltest from "../../diagramCreator/resources/test.bpmn";
-import logo from '../../images/logo.png'
+import logo from "../../images/logo.png";
 import Swal from "sweetalert2";
 import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
 import Sidebar from "./sidebar";
-
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
 	dangerouslyAllowBrowser: true,
 });
 
+async function removeBpmndiSection(xml) {
+	// Encontrar el índice donde empieza la etiqueta <bpmndi>
+	const bpmndiIndex = xml.indexOf("<bpmndi");
+
+	// Si se encuentra la etiqueta, cortar el XML hasta ese punto
+	if (bpmndiIndex !== -1) {
+		xml = xml.substring(0, bpmndiIndex);
+		// Opcionalmente puedes agregar la etiqueta de cierre para mantener un XML bien formado
+		xml += "</definitions>";
+	}
+
+	return xml;
+}
+
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
 
-	const colorAI = (yesIds, noIds) => { //Color function
-		var elementRegistry = diagramDefinitions.get('elementRegistry') // Get IDs
-		var modeling = diagramDefinitions.get('modeling'); // Modeling with the functions of color (and other)
-		yesIds.forEach(element => {
+	const colorAI = (yesIds, noIds) => {
+		//Color function
+		var elementRegistry = diagramDefinitions.get("elementRegistry"); // Get IDs
+		var modeling = diagramDefinitions.get("modeling"); // Modeling with the functions of color (and other)
+		yesIds.forEach((element) => {
 			modeling.setColor(elementRegistry.get(element), {
-				stroke: 'black',
-				fill: 'green'
+				stroke: "black",
+				fill: "green",
 			});
 		});
-		noIds.forEach(element => {
+		noIds.forEach((element) => {
 			modeling.setColor(elementRegistry.get(element), {
-				stroke: 'black',
-				fill: 'red'
+				stroke: "black",
+				fill: "red",
 			});
 		});
-	}
+	};
 
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
@@ -56,47 +70,179 @@ function Navbar({ onReset }) {
 			title: t("sweetalert.bpmnsent"),
 			showConfirmButton: false,
 			icon: "success",
-			customClass: 'swal-aisent',
+			customClass: "swal-aisent",
 		});
 		let xml = await getXmlFromModeler(diagramDefinitions); // Obtain current xml
+
+		console.log("XML:", xml);
+
+		let modifiedXml = await removeBpmndiSection(xml);
+		console.log("Modified XML:", modifiedXml);
 		let data; //Answer Object
 		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+
+		-----------------------------------------------------
+
+		PRIMER PASO - IDENTIFICAR POSIBLES HISTORIAS DE USUARIO A PARTIR DE CADA UNO DE LOS SUBPROCESOS EN EL BPM
 		
-		Tu tarea es analizar este diagrama y extraer de cada subproceso (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML) las historias de usuario (HU) asociadas. 
+		Tu tarea es analizar este diagrama y extraer de cada subproceso las historias de usuario (HU) asociadas (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML). 
 		
-		Debes identificar al menos dos historias por cada subproceso y describirlas detalladamente. Presenta tus hallazgos en formato JSON como se muestra a continuación:
+		Para cada subproceso, describe detalladamente entre 1 y 10 posibles HUs que sean críticas para el proceso.
+		
+		Por ejemplo si un subproceso es "Realizar compra". Las historias que podrían ser necesarias son las siguientes: 
+		-Obtener datos del cliente
+		-Seleccionar medio de pago
+		-Validar tarjeta según medio de pago
+
+
+		-----------------------------------------------------
+
+		SEGUNDO PASO - IDENTIFICAR HISTORIAS DE USUARIO QUE PUEDEN SER REALIZABLES POR INTELIGENCIA ARTIFICIAL EN SU TOTALIDAD, O PARCIALMENTE
+
+		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible.
+
+		Ejemplo de criterios de evaluación de IA:
+		- Automatización de Datos: ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
+		- Interacción Humana: ¿Es la interacción o el input humano simplificable o reemplazable mediante bots o interfaces de IA?
+		- Análisis Predictivo: ¿Involucra la toma de decisiones basada en el análisis predictivo o reconocimiento de patrones?
+		- Procesamiento de Lenguaje Natural (PLN): ¿Requiere comprender o generar texto natural de manera que una IA podría gestionar?
+
+		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido.
+
+		En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN.
+
+
+		-> Ejemplos de historias de usuario que pueden ser realizadas con inteligencia artificial:
+
+		Como gerente de atención al cliente, quiero un chatbot de IA que responda preguntas comunes para reducir el tiempo de espera de los clientes.
+		Como usuario de una aplicación de fitness, deseo recibir recomendaciones personalizadas de ejercicios basadas en mi progreso y objetivos.
+		Como especialista en marketing, quiero que un sistema de IA analice las tendencias de consumo para optimizar nuestras campañas publicitarias.
+		Como editor de un periódico, necesito una herramienta de IA que sugiera titulares atractivos basados en el contenido de los artículos.
+		Como comprador en línea, quiero un asistente de compra virtual que me recomiende productos basados en mis compras anteriores y preferencias.
+		Como analista financiero, deseo utilizar algoritmos de IA para predecir tendencias del mercado y asesorar mejor a mis clientes.
+		Como usuario de una aplicación de citas, quiero que un algoritmo de IA me sugiera matches potenciales basados en compatibilidad de intereses y personalidades.
+		Como administrador de redes sociales, necesito una herramienta de IA que genere automáticamente contenido atractivo para mejorar el engagement en nuestras plataformas.
+		Como reclutador, quiero un sistema de IA que analice currículos automáticamente para encontrar los candidatos más adecuados para una vacante.
+		Como investigador, necesito una herramienta de IA que realice revisiones de literatura y resuma investigaciones relevantes en mi campo.
+		Como usuario, quiero poder ingresar mi búsqueda por voz, para no tener que usar el teclado
+		Como gerente de atención al cliente, deseo utilizar herramientas de IA para realizar análisis de sentimiento y resumir las respuestas de las encuestas, ayudando a comprender mejor la satisfacción del cliente.
+		Como agente de atención al cliente, necesito que las consultas sean clasificadas automáticamente por urgencia y tema para priorizar mi trabajo de manera eficiente.
+		Como supervisor de atención al cliente, quiero que los tickets sean asignados automáticamente al agente más adecuado para mejorar la eficiencia en la resolución de problemas.
+
+		-> Ejempos de historias de usuario NO realizables de alguna manera con inteligencia artificial: 
+
+		Como desarrollador, necesito enviar información al backend para que pueda ser procesada y utilizada en la aplicación.
+		Como usuario, quiero que la aplicación reciba y atienda mis solicitudes de manera eficiente.
+		Como usuario, deseo que la aplicación reciba y procese mi lista de compras para facilitar el proceso de compra.
+		Como encargado de almacén, quiero recibir una notificación cuando el stock de un producto esté por debajo del nivel mínimo para reponerlo.
+		Como usuario, quiero poder solicitar una orden de compra para adquirir materiales de oficina.
+		Como gerente, quiero poder autorizar una orden de compra para la adquisición de nuevos equipos de trabajo.
+		Como supervisor de compras, quiero recibir un informe automatizado con la disponibilidad de los productos en stock para agilizar la autorización de órdenes de compra.
+		Como proveedor, quiero recibir una notificación automática cuando se realice el pago de una factura.
+		Como cliente, quiero que se abra la información del producto en mi aplicación móvil después de escanear el código QR.
+		Como cliente, deseo recibir notificaciones por correo electrónico sobre las promociones mensuales para aprovechar las ofertas especiales.
+		Como usuario final, necesito una opción de restablecimiento de contraseña para recuperar mi acceso cuando lo olvide.
+		Como desarrollador, quiero tener acceso a una API documentada para integrar rápidamente nuestra solución con sistemas externos.
+		Como jugador en una app de videojuegos, quiero poder guardar mi progreso automáticamente para no perder mi avance al salir del juego.
+		Como administrador, quiero poder asignar tareas a los empleados para gestionar mejor la carga de trabajo.
+		Como gerente de proyecto, quiero ver un dashboard de progreso del proyecto para monitorear el estado de todas las tareas activas.
+		Como analista de datos, necesito exportar informes en formato CSV para realizar análisis offline.
+		Como comprador en un e-commerce, quiero agregar productos a un carrito de compras para revisarlos antes de finalizar mi compra.
+		Como miembro de soporte técnico, necesito poder acceder al historial de interacciones del cliente para proporcionar un servicio más personalizado.
+		Como paciente, deseo poder reservar citas médicas en línea para evitar llamadas telefónicas y esperas.
+		Como cliente, quiero notar el código QR para saber que debo escanearlo.
+		Como cliente, quiero escanear el código QR para acceder a la información del producto
+		Como cliente, quiero que se abra la información del producto en mi aplicación móvil después de escanear el código QR
+		Como cliente, quiero poder enviar fácilmente mis consultas a través de la plataforma para que sean atendidas de manera rápida.
+		Como agente de atención al cliente, necesito contactar al cliente para obtener más detalles sobre su consulta, asegurando que tengo toda la información necesaria para proceder.
+		Como agente de atención al cliente, quiero evaluar cada consulta y determinar las posibles soluciones para responder efectivamente a las necesidades del cliente.
+		Como técnico de soporte, necesito actualizar el sistema con los detalles de la solución aplicada para mantener un registro preciso del caso.
+		Como agente de atención al cliente, quiero verificar con el cliente si la solución proporcionada ha resuelto su problema satisfactoriamente para asegurar la calidad del servicio.
+		Como gerente de atención al cliente, quiero que se envíe automáticamente una encuesta de satisfacción al finalizar la interacción para evaluar la calidad del servicio proporcionado.
+
+		-----------------------------------------------------
+
+		OBTENER EL ID DEL SUBPROCESO:
+
+		Este es un proceso de ejemplo:
+
+		<process id="Process_1lixb0g">
+    <task id="Task_00vcoxw" name="Empacar mercancía">
+      <outgoing>SequenceFlow_1vmzhhu</outgoing>
+    </task>
+    <task id="Task_18j261d" name="Enviar mercancía">
+      <incoming>SequenceFlow_1vmzhhu</incoming>
+      <outgoing>SequenceFlow_17c5a5w</outgoing>
+    </task>
+    <endEvent id="EndEvent_0l800er" name="Orden completada">
+      <incoming>SequenceFlow_17c5a5w</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_1vmzhhu" sourceRef="Task_00vcoxw" targetRef="Task_18j261d" />
+    <sequenceFlow id="SequenceFlow_17c5a5w" sourceRef="Task_18j261d" targetRef="EndEvent_0l800er" />
+  	</process>
+
+		El (id del subproceso) y el 'name' son el 'id' y 'name' que se encuentran en el XML.
+		Por ejemplos los subprocesos serían: 
+
+		<task id="Task_00vcoxw" name="Empacar mercancía">
+      <outgoing>SequenceFlow_1vmzhhu</outgoing>
+    </task>
+    <task id="Task_18j261d" name="Enviar mercancía">
+      <incoming>SequenceFlow_1vmzhhu</incoming>
+      <outgoing>SequenceFlow_17c5a5w</outgoing>
+    </task>
+    <endEvent id="EndEvent_0l800er" name="Orden completada">
+      <incoming>SequenceFlow_17c5a5w</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_1vmzhhu" sourceRef="Task_00vcoxw" targetRef="Task_18j261d" />
+    <sequenceFlow id="SequenceFlow_17c5a5w" sourceRef="Task_18j261d" targetRef="EndEvent_0l800er" />
+
+		Y el (id del subproceso) serían los siguientes:
+		Task_00vcoxw
+		Task_18j261d
+		EndEvent_0l800er
+		SequenceFlow_1vmzhhu
+		SequenceFlow_17c5a5w
+
+		Debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> y demás que se encuentren dentro de todos los <process></process> en el diagrama.
+
+		NO incluirás en la respuesta los: <participant></participant>
+
+		-----------------------------------------------------
+
+		Cuando el name de las task esté en inglés, deberás responder en ese idioma. Responde con el idioma en el que están escritas los name de las task.
+		
+		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado sin incluir etiquetas XML como <process> directamente.
+
+		La salida se podría ver así:
 
 		{
-			"(id del subproceso)" : {
-			"name": "Nombre del subproceso según el diagrama XML",
-			"description": "Descripción de las actividades clave que se realizan en este subproceso",
-			"user_stories": [
-				{
-				"id": "hu1",
-				"description": "Descripción de la historia de usuario 1",
-				"ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
-				},
-				{
-				"id": "hu2",
-				"description": "Descripción de la historia de usuario 2",
-				"ai": "SI/NO - Justificación breve de la aplicabilidad de IA"
-				}
-			]
+			"Task_12345 (id del subproceso)": {
+					"name": "Nombre del subproceso según el diagrama XML",
+					"description": "Descripción de las actividades clave que se realizan en este subproceso",
+					"user_stories": [
+							{
+									"id": "hu1",
+									"description": "Descripción de la historia de usuario 1",
+									"justification": "Justificación breve de la aplicabilidad de IA"
+							},
+							{
+									"id": "hu2",
+									"description": "Descripción de la historia de usuario 2",
+									"ai": "SI/NO",
+									"justification": "Justificación breve de la aplicabilidad de IA"
+							}
+					]
 			},
-			[agrega el resto de subprocesos]
-			
+			"otros subprocesos": {...}
 		}
+	
+
 		
-		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones, toma de decisiones o cualquier otro elemento relevante que la IA podría manejar.
-
-		Notas adicionales:
-		-El (id del subproceso) y el name son el id y name que se muestra en el XML (por ejemplo): <task id="Task_020wfhh" name="Hacer orden de compra">.
-		-Un subproceso son todos los elementos dentro de un <process> en el XML; debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> <messageFlow>.
-
-		Este es el diagrama en formato XML: \n${xml} 
+		Este es el diagrama en formato XML: \n${modifiedXml} 
 		
 		`;
-		const numTokens = prompt.length / 2.1
+		const numTokens = prompt.length / 2.1;
 		if (numTokens <= 16385) {
 			try {
 				console.log("Enviando solicitud a GPT");
@@ -104,7 +250,7 @@ function Navbar({ onReset }) {
 					model: "gpt-3.5-turbo",
 					// prompt: prompt,
 					// max_tokens: 50,
-					temperature: 0.5,
+					temperature: 0.3,
 					messages: [
 						{
 							content: prompt,
@@ -122,22 +268,28 @@ function Navbar({ onReset }) {
 					showConfirmButton: false,
 					icon: "success",
 					timer: 2000,
-					customClass: 'swal-aisent',
+					customClass: "swal-aisent",
 					timerProgressBar: true,
 				});
-				const BpmnIds = Object.keys(data);		//Every Id on the BPMN
+
+				console.log(data);
+				const BpmnIds = Object.keys(data); //Every Id on the BPMN
 				const BpmnValues = Object.values(data); //Every object related to the Ids
-				const { yesIds, noIds } = BpmnValues.reduce((acc, value, index) => { // Go object to object into the BpmnValues list
-					const userStories = value.user_stories; //Access user_stories property of every ID
-					const id = BpmnIds[index]; 	//If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
-					const hasYes = userStories.some(story => story.ai.substring(0, 2) === "SI");
-					if (hasYes) {
-						acc.yesIds.push(id);
-					} else {
-						acc.noIds.push(id);
-					}
-					return acc;
-				}, { yesIds: [], noIds: [] }); //Variables initialized
+				const { yesIds, noIds } = BpmnValues.reduce(
+					(acc, value, index) => {
+						// Go object to object into the BpmnValues list
+						const userStories = value.user_stories; //Access user_stories property of every ID
+						const id = BpmnIds[index]; //If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
+						const hasYes = userStories.some((story) => story.ai.substring(0, 2) === "SI");
+						if (hasYes) {
+							acc.yesIds.push(id);
+						} else {
+							acc.noIds.push(id);
+						}
+						return acc;
+					},
+					{ yesIds: [], noIds: [] }
+				); //Variables initialized
 				colorAI(yesIds, noIds);
 			} catch (error) {
 				console.error("Error al conectar con la IA", error);
@@ -157,12 +309,11 @@ function Navbar({ onReset }) {
 					showConfirmButton: false,
 					icon: "error",
 					timer: 2000,
-					customClass: 'swal-aisent',
+					customClass: "swal-aisent",
 					timerProgressBar: true,
 				});
 			}
-		}
-		else {
+		} else {
 			Swal.fire({
 				toast: true,
 				position: "top-end",
@@ -170,15 +321,17 @@ function Navbar({ onReset }) {
 				showConfirmButton: false,
 				icon: "error",
 				timer: 2000,
-				customClass: 'swal-aisent',
+				customClass: "swal-aisent",
 				timerProgressBar: true,
 			});
 		}
 	};
 
-
 	function getXmlFromModeler(modeler) {
 		return new Promise((resolve, reject) => {
+			if (!modeler) {
+				return reject(new Error("Modeler is not initialized"));
+			}
 			modeler.saveXML({ format: true }, (err, xml) => {
 				if (err) {
 					reject(err);
@@ -242,10 +395,9 @@ function Navbar({ onReset }) {
 		// }
 	};
 
-
 	const handleFileMenu = async (e) => {
 		switch (e.key) {
-			case 'save':
+			case "save":
 				const xml = await getXmlFromModeler(diagramDefinitions);
 
 				const { value: title } = await Swal.fire({
@@ -257,34 +409,41 @@ function Navbar({ onReset }) {
 						if (!value) {
 							return t("dialogMessages.titleReq");
 						}
-					}
+					},
 				});
-				if (title) {//saving
-					let bpmnList = JSON.parse(localStorage.getItem('bpmnList')) || [];
+				if (title) {
+					//saving
+					let bpmnList = JSON.parse(localStorage.getItem("bpmnList")) || [];
 					const currentDate = new Date();
 					const newBPMN = {
 						title: title,
 						date: currentDate.toISOString(),
-						xml: xml
+						xml: xml,
 					};
 					bpmnList.push(newBPMN);
 
-					localStorage.setItem('bpmnList', JSON.stringify(bpmnList));
+					localStorage.setItem("bpmnList", JSON.stringify(bpmnList));
 
 					await Swal.fire(`${t("dialogMessages.saveSuccess")} ${title}`);
 				}
 				break;
 			default:
-				console.log("No se encontró la file key: ", e.key)
+				console.log("No se encontró la file key: ", e.key);
 				break;
 		}
 	};
 
 	const fileMenu = (
 		<Menu onClick={handleFileMenu}>
-			<Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
-			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}</Menu.Item>
-			<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
+			<Menu.Item key="new" id="newItem">
+				{t("fileMenu.new")}
+			</Menu.Item>
+			<Menu.Item key="save" id="saveItem">
+				{t("fileMenu.save")}
+			</Menu.Item>
+			<Menu.Item key="trash" id="trashItem">
+				{t("fileMenu.trash")}
+			</Menu.Item>
 			<Menu.Divider />
 			<Menu.Item
 				key="history"
@@ -296,10 +455,11 @@ function Navbar({ onReset }) {
 				{t("fileMenu.history")}
 			</Menu.Item>
 			<Menu.Divider />
-			<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
+			<Menu.Item key="trash" id="trashItem">
+				{t("fileMenu.trash")}
+			</Menu.Item>
 		</Menu>
 	);
-
 
 	return (
 		<div className="navbar-container">
@@ -309,11 +469,10 @@ function Navbar({ onReset }) {
 				className="sidebar-button"
 			/>
 			<div className="logo-title">
-				<img className='logo' src={logo} alt="logo" />
+				<img className="logo" src={logo} alt="logo" />
 				<div className="title">{t("IdentiAI")}</div>
 			</div>
 			<div className="navbar-buttons">
-
 				<Dropdown
 					overlay={fileMenu}
 					className="navbar-dropdown"
