@@ -5,6 +5,8 @@
     "keywords": [],
     "main": "src/index.js",
     "dependencies": {
+        "@ant-design/icons": "^5.3.7",
+        "@ctrl/tinycolor": "^4.1.0",
         "@emotion/react": "^11.11.4",
         "@emotion/styled": "^11.11.5",
         "@mui/material": "^5.15.15",
@@ -20,8 +22,9 @@
         "react-dom": "^18.2.0",
         "react-i18next": "^14.1.1",
         "react-scripts": "^5.0.1",
-        "sweetalert2": "^11.10.8",
-        "react-select": "^5.8.0"
+        "react-select": "^5.8.0",
+        "styled-components": "^6.1.11",
+        "sweetalert2": "^11.10.8"
     },
     "scripts": {
         "start": "react-scripts start",
