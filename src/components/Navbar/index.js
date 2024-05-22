@@ -4,7 +4,7 @@ import { OpenAI } from "openai";
 import { DownOutlined } from "@ant-design/icons";
 import "./styles.css";
 import { useTranslation } from "react-i18next";
-import DropdownLang from "../Dropdown/index";
+import DropdownLang from "./Dropdown/index";
 import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 import xmltest from "../../diagramCreator/resources/test.bpmn";
 import logo from '../../images/logo.png'
@@ -20,6 +20,7 @@ const openai = new OpenAI({
 
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
+	const { diagramDefinitions } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
 
 	const colorAI = (yesIds, noIds) => { //Color function
@@ -258,7 +259,7 @@ function Navbar({ onReset }) {
 						}
 					}
 				});
-				if (title) {
+				if (title) {//saving
 					let bpmnList = JSON.parse(localStorage.getItem('bpmnList')) || [];
 					const currentDate = new Date();
 					const newBPMN = {
@@ -282,8 +283,7 @@ function Navbar({ onReset }) {
 	const fileMenu = (
 		<Menu onClick={handleFileMenu}>
 			<Menu.Item key="new" id="newItem">{t("fileMenu.new")}</Menu.Item>
-			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}
-			</Menu.Item>
+			<Menu.Item key="save" id="saveItem" >{t("fileMenu.save")}</Menu.Item>
 			<Menu.Item key="trash" id="trashItem">{t("fileMenu.trash")}</Menu.Item>
 			<Menu.Divider />
 			<Menu.Item
