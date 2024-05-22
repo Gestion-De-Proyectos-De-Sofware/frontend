@@ -130,3 +130,24 @@
 .ant-dropdown-menu-item {
     border: 1px solid transparent; 
 }
+
+.sidebar-button {
+    background-color: #001529;
+    color: white;
+    border: none;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-button:hover {
+    background-color: #1890ff;
+    color: white;
+}
+
+.sidebar-button:focus {
+    background-color: #001529;
+    color: white;
+    outline: none;
+}
