@@ -36,7 +36,7 @@
     justify-content: flex-start;
     padding: 18px;
     color: white;
-    background-color: rgb(2, 40, 90);
+    background-color: #02285a;
     margin-top: 0;
     height: 35px;
 }
@@ -79,7 +79,8 @@
 .navbar-button-export:hover {
     border-color: transparent !important;
     background-color: transparent !important;
-    color: #baf6ff !important;
+
+
 }
 
 .navbar-button {
@@ -91,9 +92,6 @@
     cursor: pointer;
 }
 
-.navbar-button:hover {
-    color: #baf6ff;
-}
 
 
 .navbar-button-IA {
@@ -103,22 +101,16 @@
     font-weight: bold;
     font-style: oblique;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    color: #adf4ff;
     padding-top: 5px;
     font-size: 1rem;
-    background-color: transparent;
-    border: 0.2rem solid;
-    border-color: #83d2ff;
     margin-left: auto;
     margin-right: 5%;
     align-self: center;
+    color: white;
+    box-shadow: #0b1728a2 3px 4px 5px 1px;
+    transition: background-image 0.3s ease;
 }
 
-.navbar-button-IA:hover {
-    border-color: #baf6ff !important;
-    background-color: transparent !important;
-    color: #baf6ff !important;
-}
 
 
 .ant-dropdown-menu {
