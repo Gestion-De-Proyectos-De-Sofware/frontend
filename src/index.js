@@ -27,7 +27,7 @@ i18next.init({
 
 
 function App() {
-  //const [sharedVariable, setSharedVariable] = useState('');
+
   return (
     <div className="App">
       <DiagramDefinitionsProvider>

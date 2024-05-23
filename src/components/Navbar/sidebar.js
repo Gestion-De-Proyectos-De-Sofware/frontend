@@ -48,7 +48,7 @@ function Sidebar({ visible, onClose }) {
         >
             <Menu>
                 {bpmnList.map((item, index) => (
-                    <Menu.Item key={index} onClick={() => {console.log(setDiagramDefinitions);console.log('Menu item clicked:', item);console.log(item.xml);setDiagramDefinitions(item.xml)}}>
+                    <Menu.Item key={index} onClick={() => {console.log(setDiagramDefinitions);console.log('Menu item clicked:', item)}}>
                         {item.title}
                     </Menu.Item>
                 ))}
