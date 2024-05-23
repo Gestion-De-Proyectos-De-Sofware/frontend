@@ -27,15 +27,15 @@ i18next.init({
 
 
 function App() {
-  const [sharedVariable, setSharedVariable] = useState('');
+  //const [sharedVariable, setSharedVariable] = useState('');
   return (
     <div className="App">
       <DiagramDefinitionsProvider>
-          <Navbar sharedVariable={sharedVariable} setSharedVariable={setSharedVariable}/>
+          <Navbar/>
           {/** This is for viewer only
           https://stackoverflow.com/questions/42708361/integrating-bpmn-js-to-modeler-the-react-component
           */}
-          <BpmnView sharedVariable={sharedVariable} setSharedVariable={setSharedVariable}/>
+          <BpmnView/>
           {/** This is for Model creator
           Comment out the nextblock will reveal the above Viewer
           */}
