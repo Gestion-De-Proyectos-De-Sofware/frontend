@@ -97,33 +97,6 @@ const GradientButton = styled(Button)`
 	}
 `;
 
-const colors1 = ["#11B0CA", "#0B5F6D"];
-const getHoverColors = (colors) =>
-	colors.map((color) => new TinyColor(color).lighten(5).toString());
-const getActiveColors = (colors) =>
-	colors.map((color) => new TinyColor(color).darken(5).toString());
-
-const GradientButton = styled(Button)`
-	background-color: #0e4690;
-	border: none;
-	padding: 10px 20px;
-	font-size: 16px;
-	font-weight: bold;
-	font-style: oblique;
-	cursor: pointer;
-	transition: background 0.3s ease !important;
-
-	&:hover {
-		background: linear-gradient(135deg, ${getHoverColors(colors1).join(", ")}) !important;
-		color: white !important;
-		transition: background 0.4s ease !important;
-	}
-	&:active {
-		background: linear-gradient(135deg, ${getActiveColors(colors1).join(", ")}) !important;
-		color: white !important;
-	}
-`;
-
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions } = useDiagramDefinitions();
