@@ -32,6 +32,47 @@ async function removeBpmndiSection(xml) {
 	return xml;
 }
 
+// Function to extract and print descriptions
+function gatherDescriptions(data) {
+	const descriptions = [];
+
+	for (const key in data) {
+		if (data[key].description) {
+			descriptions.push(data[key].description);
+		}
+		if (data[key].user_stories) {
+			data[key].user_stories.forEach((story) => {
+				if (story.description) {
+					descriptions.push(story.description);
+				}
+			});
+		}
+	}
+
+	return descriptions;
+}
+
+function getIdsWithNameAttribute(xml) {
+	const elements = xml.getElementsByTagName("*");
+	const ids = [];
+	for (let i = 0; i < elements.length; i++) {
+		if (
+			elements[i].hasAttribute("name") &&
+			elements[i].nodeName !== "participant" &&
+			elements[i].nodeName !== "process" &&
+			elements[i].nodeName !== "lane" &&
+			elements[i].nodeName !== "messageFlow" &&
+			elements[i].nodeName !== "flowNodeRef"
+		) {
+			// console.log(elements[i].getAttribute("id"));
+			if (elements[i].getAttribute("id") != null) {
+				ids.push(elements[i].getAttribute("id"));
+			}
+		}
+	}
+	return ids;
+}
+
 const colors1 = ["#11B0CA", "#0B5F6D"];
 const getHoverColors = (colors) =>
 	colors.map((color) => new TinyColor(color).lighten(5).toString());
@@ -91,6 +132,33 @@ function Navbar({ onReset }) {
 		}
 	};
 
+	const template = {
+		name: "Nombre del subproceso según el diagrama XML",
+		task_description: "Descripción de las actividades clave que se realizan en este subproceso",
+		user_stories: [
+			{
+				id: "hu1",
+				description: "Descripción de la historia de usuario 1",
+				ai: "SI/NO",
+				justification: "Justificación breve de la aplicabilidad de IA",
+			},
+			{
+				id: "hu2",
+				description: "Descripción de la historia de usuario 2",
+				ai: "SI/NO",
+				justification: "Justificación breve de la aplicabilidad de IA",
+			},
+		],
+	};
+
+	const generateJson = (ids, template) => {
+		let result = {};
+		ids.forEach((id) => {
+			result[id] = JSON.parse(JSON.stringify(template)); // deep copy of template
+		});
+		return result;
+	};
+
 	const handleAI = async () => {
 		Swal.fire({
 			toast: true,
@@ -102,10 +170,21 @@ function Navbar({ onReset }) {
 		});
 		let xml = await getXmlFromModeler(diagramDefinitions); // Obtain current xml
 
-		console.log("XML:", xml);
+		// console.log("XML:", xml);
 
 		let modifiedXml = await removeBpmndiSection(xml);
 		console.log("Modified XML:", modifiedXml);
+
+		const parser = new DOMParser();
+
+		const xmlDoc = parser.parseFromString(modifiedXml, "application/xml");
+
+		const ids = getIdsWithNameAttribute(xmlDoc);
+		console.log(ids);
+
+		const jsonOutput = generateJson(ids, template);
+		const jsonOutputStringify = JSON.stringify(jsonOutput, null, 4);
+
 		let data; //Answer Object
 		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
 
@@ -113,7 +192,7 @@ function Navbar({ onReset }) {
 
 		PRIMER PASO - IDENTIFICAR POSIBLES HISTORIAS DE USUARIO A PARTIR DE CADA UNO DE LOS SUBPROCESOS EN EL BPM
 		
-		Tu tarea es analizar este diagrama y extraer de cada subproceso las historias de usuario (HU) asociadas (no te puede faltar ningún subproceso sin analizar) (los subprocesos los puedes identificar como los <task>, <sequenceFlow>, <receiveTask> <exclusiveGateway> <messageFlow> en el XML). 
+		Tu tarea es analizar este diagrama y analizar los siguientes subprocesos que serán consignados en la respuesta final en un JSON: \n${ids} (estos son los ids de los subprocesos que hay en el XML). 
 		
 		Para cada subproceso, describe detalladamente entre 1 y 10 posibles HUs que sean críticas para el proceso.
 		
@@ -129,19 +208,20 @@ function Navbar({ onReset }) {
 
 		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible.
 
-		Ejemplo de criterios de evaluación de IA:
-		- Automatización de Datos: ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
-		- Interacción Humana: ¿Es la interacción o el input humano simplificable o reemplazable mediante bots o interfaces de IA?
-		- Análisis Predictivo: ¿Involucra la toma de decisiones basada en el análisis predictivo o reconocimiento de patrones?
-		- Procesamiento de Lenguaje Natural (PLN): ¿Requiere comprender o generar texto natural de manera que una IA podría gestionar?
+		Criterios de evaluación de IA:
+		- ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
+		- ¿Es la interacción o el input humano reemplazable mediante bots o interfaces de IA?
+		- ¿Involucra la toma de decisiones basada en el análisis predictivo o reconocimiento de patrones?
+		- ¿Es esta una tarea repetitiva que consume mucho tiempo y que podría ser más eficiente con IA?
+		- ¿Aportaría la IA mejoras significativas en eficiencia o experiencia del usuario sin complicar innecesariamente el proceso?
+		- ¿Es tecnológicamente factible implementar IA para esta tarea sin excesiva inversión en recursos o alteración del sistema existente?
+		- ¿Es realmente necesario incluir IA para esta tarea? 
 
-		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido.
-
-		En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN.
-
-
+		Las historias que marques como realizables por IA, deben cumplir mínimo 3 de los criterios anteriores y obligatoriamente el criterio de ¿Es realmente necesario incluir IA para esta tarea?.
+		
 		-> Ejemplos de historias de usuario que pueden ser realizadas con inteligencia artificial:
 
+		Que requieran uso de herramientas como reconocimiento de voz a texto, texto a voz, web scraping, reconocimiento de imagenes o patrones, entre otros. 
 		Como gerente de atención al cliente, quiero un chatbot de IA que responda preguntas comunes para reducir el tiempo de espera de los clientes.
 		Como usuario de una aplicación de fitness, deseo recibir recomendaciones personalizadas de ejercicios basadas en mi progreso y objetivos.
 		Como especialista en marketing, quiero que un sistema de IA analice las tendencias de consumo para optimizar nuestras campañas publicitarias.
@@ -152,16 +232,27 @@ function Navbar({ onReset }) {
 		Como administrador de redes sociales, necesito una herramienta de IA que genere automáticamente contenido atractivo para mejorar el engagement en nuestras plataformas.
 		Como reclutador, quiero un sistema de IA que analice currículos automáticamente para encontrar los candidatos más adecuados para una vacante.
 		Como investigador, necesito una herramienta de IA que realice revisiones de literatura y resuma investigaciones relevantes en mi campo.
-		Como usuario, quiero poder ingresar mi búsqueda por voz, para no tener que usar el teclado
+		Como usuario, quiero poder ingresar mi búsqueda por voz
 		Como gerente de atención al cliente, deseo utilizar herramientas de IA para realizar análisis de sentimiento y resumir las respuestas de las encuestas, ayudando a comprender mejor la satisfacción del cliente.
 		Como agente de atención al cliente, necesito que las consultas sean clasificadas automáticamente por urgencia y tema para priorizar mi trabajo de manera eficiente.
 		Como supervisor de atención al cliente, quiero que los tickets sean asignados automáticamente al agente más adecuado para mejorar la eficiencia en la resolución de problemas.
+		Como empleado de ventas, deseo recibir recomendaciones automáticas de productos alternativos para ofrecer a los clientes
+		Como cliente, deseo recibir sugerencias de productos complementarios a mi orden.
+		Como cliente, quiero recibir recomendaciones de productos similares en caso de que no haya stock.
+		Como gerente de recursos humanos, quiero una herramienta de IA que realice entrevistas preliminares con candidatos para filtrar a los más adecuados.
+		Como agricultor, quiero un sistema de IA que analice las condiciones del suelo y el clima para optimizar el riego y fertilización de mis cultivos.
+		Como administrador de un hospital, necesito una IA que pueda predecir la ocupación de camas para mejorar la planificación de recursos.
+		Como profesor, quiero un asistente de IA que califique automáticamente los exámenes de opción múltiple para ahorrar tiempo.
+		Como usuario de una aplicación de salud mental, deseo recibir recomendaciones personalizadas de meditación basadas en mi estado de ánimo.
+		Como médico, quiero un sistema que analice imágenes de resonancias magnéticas para detectar posibles anomalías.
+		Como usuario de una aplicación de música, deseo recibir recomendaciones de canciones y artistas nuevos basados en mis preferencias y hábitos de escucha.
+		Como profesor, quiero una herramienta que evalúe automáticamente los ensayos de los estudiantes y proporcione comentarios detallados.
+		Como encargado de un servicio de atención al cliente, quiero un sistema que clasifique automáticamente las consultas de los clientes por prioridad.
+		Como gestor de contenido, deseo una herramienta que me sugiera palabras clave y etiquetas para mejorar el SEO de nuestros artículos.
 
-		-> Ejempos de historias de usuario NO realizables de alguna manera con inteligencia artificial: 
 
-		Como desarrollador, necesito enviar información al backend para que pueda ser procesada y utilizada en la aplicación.
-		Como usuario, quiero que la aplicación reciba y atienda mis solicitudes de manera eficiente.
-		Como usuario, deseo que la aplicación reciba y procese mi lista de compras para facilitar el proceso de compra.
+		-> Ejemplos de historias de usuario NO realizables de alguna manera con inteligencia artificial: 
+
 		Como encargado de almacén, quiero recibir una notificación cuando el stock de un producto esté por debajo del nivel mínimo para reponerlo.
 		Como usuario, quiero poder solicitar una orden de compra para adquirir materiales de oficina.
 		Como gerente, quiero poder autorizar una orden de compra para la adquisición de nuevos equipos de trabajo.
@@ -187,87 +278,46 @@ function Navbar({ onReset }) {
 		Como técnico de soporte, necesito actualizar el sistema con los detalles de la solución aplicada para mantener un registro preciso del caso.
 		Como agente de atención al cliente, quiero verificar con el cliente si la solución proporcionada ha resuelto su problema satisfactoriamente para asegurar la calidad del servicio.
 		Como gerente de atención al cliente, quiero que se envíe automáticamente una encuesta de satisfacción al finalizar la interacción para evaluar la calidad del servicio proporcionado.
+		Como empleado de bodega, deseo recibir instrucciones claras sobre cómo empacar la mercancía de forma eficiente
+		Como empleado de ventas, deseo recibir las órdenes de compra de forma clara y organizada
+		Como cliente, deseo recibir sugerencias de productos alternativos en caso de que el producto seleccionado no esté disponible
+		Como empleado de ventas, deseo recibir notificaciones automáticas sobre cambios sugeridos en las órdenes de compra
+		Como sistema, debo registrar el inicio de un nuevo proceso de compra para su seguimiento
+		Como cliente, deseo poder realizar una orden de compra de manera sencilla y rápida
+		Como cliente, deseo recibir confirmación de mi orden de compra de manera inmediata
+		Como sistema, debo procesar y registrar las órdenes recibidas de los clientes
+		Como cliente, deseo recibir sugerencias de productos similares en caso de que el producto seleccionado no esté disponible
+		Como empleado de bodega, deseo recibir notificaciones automáticas sobre las solicitudes de preparación de paquetes
+		Como sistema, debo verificar automáticamente si hay suficiente stock para procesar una orden
+		Como empleado de bodega, deseo recibir notificaciones automáticas sobre las órdenes de empaque pendientes
+		Como sistema, debo generar automáticamente la etiqueta de envío y coordinar la logística de entrega
+		Como cliente, quiero poder agregar productos al carrito de compra para realizar una orden.
+		Como cliente, deseo recibir notificaciones sobre el estado de mi orden de compra.
+		Como cliente, quiero recibir confirmación de mi orden de compra.
+		Como empleado de ventas, deseo recibir notificaciones automáticas sobre la disponibilidad de mercancías para informar al cliente.
+		Como empleado de ventas, necesito recibir alertas automáticas cuando el stock de un producto esté por debajo del nivel mínimo.
+		Como empleado de bodega, deseo recibir sugerencias de empaquetado eficiente para optimizar el proceso de envío.
+		Como empleado de logística, deseo recibir rutas de envío optimizadas para garantizar la entrega puntual.
+		Como cliente, deseo recibir una confirmación automática de la finalización de mi orden y envío.
+		Como comerciante en línea, deseo una IA que gestione automáticamente el inventario y haga pedidos a los proveedores cuando el stock sea bajo.
+		As an employee, I want to send goods for delivery accurately and timely.
+		
+
+		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido. En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN.
+
+		 
 
 		-----------------------------------------------------
 
-		OBTENER EL ID DEL SUBPROCESO:
-
-		Este es un proceso de ejemplo:
-
-		<process id="Process_1lixb0g">
-    <task id="Task_00vcoxw" name="Empacar mercancía">
-      <outgoing>SequenceFlow_1vmzhhu</outgoing>
-    </task>
-    <task id="Task_18j261d" name="Enviar mercancía">
-      <incoming>SequenceFlow_1vmzhhu</incoming>
-      <outgoing>SequenceFlow_17c5a5w</outgoing>
-    </task>
-    <endEvent id="EndEvent_0l800er" name="Orden completada">
-      <incoming>SequenceFlow_17c5a5w</incoming>
-    </endEvent>
-    <sequenceFlow id="SequenceFlow_1vmzhhu" sourceRef="Task_00vcoxw" targetRef="Task_18j261d" />
-    <sequenceFlow id="SequenceFlow_17c5a5w" sourceRef="Task_18j261d" targetRef="EndEvent_0l800er" />
-  	</process>
-
-		El (id del subproceso) y el 'name' son el 'id' y 'name' que se encuentran en el XML.
-		Por ejemplos los subprocesos serían: 
-
-		<task id="Task_00vcoxw" name="Empacar mercancía">
-      <outgoing>SequenceFlow_1vmzhhu</outgoing>
-    </task>
-    <task id="Task_18j261d" name="Enviar mercancía">
-      <incoming>SequenceFlow_1vmzhhu</incoming>
-      <outgoing>SequenceFlow_17c5a5w</outgoing>
-    </task>
-    <endEvent id="EndEvent_0l800er" name="Orden completada">
-      <incoming>SequenceFlow_17c5a5w</incoming>
-    </endEvent>
-    <sequenceFlow id="SequenceFlow_1vmzhhu" sourceRef="Task_00vcoxw" targetRef="Task_18j261d" />
-    <sequenceFlow id="SequenceFlow_17c5a5w" sourceRef="Task_18j261d" targetRef="EndEvent_0l800er" />
-
-		Y el (id del subproceso) serían los siguientes:
-		Task_00vcoxw
-		Task_18j261d
-		EndEvent_0l800er
-		SequenceFlow_1vmzhhu
-		SequenceFlow_17c5a5w
-
-		Debes analizar todos los <task> <sequenceFlow> <receiveTask> <exclusiveGateway> y demás que se encuentren dentro de todos los <process></process> en el diagrama.
-
-		NO incluirás en la respuesta los: <participant></participant>
-
-		-----------------------------------------------------
-
-		Cuando el name de las task esté en inglés, deberás responder en ese idioma. Responde con el idioma en el que están escritas los name de las task.
-		
-		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado sin incluir etiquetas XML como <process> directamente.
-
-		La salida se podría ver así:
-
-		{
-			"Task_12345 (id del subproceso)": {
-					"name": "Nombre del subproceso según el diagrama XML",
-					"description": "Descripción de las actividades clave que se realizan en este subproceso",
-					"user_stories": [
-							{
-									"id": "hu1",
-									"description": "Descripción de la historia de usuario 1",
-									"justification": "Justificación breve de la aplicabilidad de IA"
-							},
-							{
-									"id": "hu2",
-									"description": "Descripción de la historia de usuario 2",
-									"ai": "SI/NO",
-									"justification": "Justificación breve de la aplicabilidad de IA"
-							}
-					]
-			},
-			"otros subprocesos": {...}
-		}
-	
-
-		
 		Este es el diagrama en formato XML: \n${modifiedXml} 
+
+		Cuando el name de las task esté en inglés, deberás responder en ese idioma. Responde con el idioma en el que están escritas los name de las task en el XML.
+				
+		IMPORTANTE: Debes incluir los siguientes subprocesos (a continuación se indican sus id) en el JSON, NO te puede hacer falta ninguno, ya que esto afecta el uso que le daré a la respuesta que des: \n${ids}
+
+		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado. 
+		
+		La respuesta será en este formato: \n${jsonOutputStringify}	
 		
 		`;
 		const numTokens = prompt.length / 2.1;
@@ -286,7 +336,7 @@ function Navbar({ onReset }) {
 						},
 					],
 				});
-				console.log("RESPUESTA");
+
 				data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
 				Swal.close();
 				Swal.fire({
@@ -300,7 +350,11 @@ function Navbar({ onReset }) {
 					timerProgressBar: true,
 				});
 
-				console.log(data);
+				console.log("RESPUESTA DE GPT:", data);
+
+				const allDescriptions = gatherDescriptions(data);
+				console.log(allDescriptions.join("\n"));
+
 				const BpmnIds = Object.keys(data); //Every Id on the BPMN
 				const BpmnValues = Object.values(data); //Every object related to the Ids
 				const { yesIds, noIds } = BpmnValues.reduce(
@@ -308,7 +362,7 @@ function Navbar({ onReset }) {
 						// Go object to object into the BpmnValues list
 						const userStories = value.user_stories; //Access user_stories property of every ID
 						const id = BpmnIds[index]; //If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
-						const hasYes = userStories.some((story) => story.ai.substring(0, 2) === "SI");
+						const hasYes = userStories.some((story) => story.ai === "SI" || story.ai === "YES");
 						if (hasYes) {
 							acc.yesIds.push(id);
 						} else {
