@@ -64,7 +64,10 @@ function getIdsWithNameAttribute(xml) {
 			elements[i].nodeName !== "messageFlow" &&
 			elements[i].nodeName !== "flowNodeRef"
 		) {
-			ids.push(elements[i].getAttribute("id"));
+			// console.log(elements[i].getAttribute("id"));
+			if (elements[i].getAttribute("id") != null) {
+				ids.push(elements[i].getAttribute("id"));
+			}
 		}
 	}
 	return ids;
@@ -129,6 +132,33 @@ function Navbar({ onReset }) {
 		}
 	};
 
+	const template = {
+		name: "Nombre del subproceso según el diagrama XML",
+		task_description: "Descripción de las actividades clave que se realizan en este subproceso",
+		user_stories: [
+			{
+				id: "hu1",
+				description: "Descripción de la historia de usuario 1",
+				ai: "SI/NO",
+				justification: "Justificación breve de la aplicabilidad de IA",
+			},
+			{
+				id: "hu2",
+				description: "Descripción de la historia de usuario 2",
+				ai: "SI/NO",
+				justification: "Justificación breve de la aplicabilidad de IA",
+			},
+		],
+	};
+
+	const generateJson = (ids, template) => {
+		let result = {};
+		ids.forEach((id) => {
+			result[id] = JSON.parse(JSON.stringify(template)); // deep copy of template
+		});
+		return result;
+	};
+
 	const handleAI = async () => {
 		Swal.fire({
 			toast: true,
@@ -140,7 +170,7 @@ function Navbar({ onReset }) {
 		});
 		let xml = await getXmlFromModeler(diagramDefinitions); // Obtain current xml
 
-		console.log("XML:", xml);
+		// console.log("XML:", xml);
 
 		let modifiedXml = await removeBpmndiSection(xml);
 		console.log("Modified XML:", modifiedXml);
@@ -151,6 +181,9 @@ function Navbar({ onReset }) {
 
 		const ids = getIdsWithNameAttribute(xmlDoc);
 		console.log(ids);
+
+		const jsonOutput = generateJson(ids, template);
+		const jsonOutputStringify = JSON.stringify(jsonOutput, null, 4);
 
 		let data; //Answer Object
 		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
@@ -174,9 +207,21 @@ function Navbar({ onReset }) {
 		SEGUNDO PASO - IDENTIFICAR HISTORIAS DE USUARIO QUE PUEDEN SER REALIZABLES POR INTELIGENCIA ARTIFICIAL EN SU TOTALIDAD, O PARCIALMENTE
 
 		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible.
+
+		Criterios de evaluación de IA:
+		- ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
+		- ¿Es la interacción o el input humano reemplazable mediante bots o interfaces de IA?
+		- ¿Involucra la toma de decisiones basada en el análisis predictivo o reconocimiento de patrones?
+		- ¿Es esta una tarea repetitiva que consume mucho tiempo y que podría ser más eficiente con IA?
+		- ¿Aportaría la IA mejoras significativas en eficiencia o experiencia del usuario sin complicar innecesariamente el proceso?
+		- ¿Es tecnológicamente factible implementar IA para esta tarea sin excesiva inversión en recursos o alteración del sistema existente?
+		- ¿Es realmente necesario incluir IA para esta tarea? 
+
+		Las historias que marques como realizables por IA, deben cumplir mínimo 3 de los criterios anteriores y obligatoriamente el criterio de ¿Es realmente necesario incluir IA para esta tarea?.
 		
 		-> Ejemplos de historias de usuario que pueden ser realizadas con inteligencia artificial:
 
+		Que requieran uso de herramientas como reconocimiento de voz a texto, texto a voz, web scraping, reconocimiento de imagenes o patrones, entre otros. 
 		Como gerente de atención al cliente, quiero un chatbot de IA que responda preguntas comunes para reducir el tiempo de espera de los clientes.
 		Como usuario de una aplicación de fitness, deseo recibir recomendaciones personalizadas de ejercicios basadas en mi progreso y objetivos.
 		Como especialista en marketing, quiero que un sistema de IA analice las tendencias de consumo para optimizar nuestras campañas publicitarias.
@@ -256,20 +301,11 @@ function Navbar({ onReset }) {
 		Como cliente, deseo recibir una confirmación automática de la finalización de mi orden y envío.
 		Como comerciante en línea, deseo una IA que gestione automáticamente el inventario y haga pedidos a los proveedores cuando el stock sea bajo.
 		As an employee, I want to send goods for delivery accurately and timely.
-
-
-		Criterios de evaluación de IA:
-		- ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
-		- ¿Es la interacción o el input humano simplificable o reemplazable mediante bots o interfaces de IA?
-		- ¿Involucra la toma de decisiones basada en el análisis predictivo o reconocimiento de patrones?
-		- ¿Es esta una tarea repetitiva que consume mucho tiempo y que podría ser más eficiente con IA?
-		- ¿Aportaría la IA mejoras significativas en eficiencia o experiencia del usuario sin complicar innecesariamente el proceso?
-		- ¿Es tecnológicamente factible implementar IA para esta tarea sin excesiva inversión en recursos o alteración del sistema existente?
-		- ¿Es realmente necesario incluir IA para esta tarea, con las herramientas que existen en la actualidad no es suficiente? 
-
-		Las historias que marques como realizables por IA, deben cumplir mínimo 2 de los criterios anteriores.
+		
 
 		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido. En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN.
+
+		 
 
 		-----------------------------------------------------
 
@@ -279,31 +315,9 @@ function Navbar({ onReset }) {
 				
 		IMPORTANTE: Debes incluir los siguientes subprocesos (a continuación se indican sus id) en el JSON, NO te puede hacer falta ninguno, ya que esto afecta el uso que le daré a la respuesta que des: \n${ids}
 
-		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado. La salida se podría ver así:
-
-		{
-			"(id del subproceso)": {
-					"name": "Nombre del subproceso según el diagrama XML",
-					"task_description": "Descripción de las actividades clave que se realizan en este subproceso",
-					"user_stories": [
-							{
-									"id": "hu1",
-									"description": "Descripción de la historia de usuario 1",
-									"ai": "SI/NO",
-									"justification": "Justificación breve de la aplicabilidad de IA"
-							},
-							{
-									"id": "hu2",
-									"description": "Descripción de la historia de usuario 2",
-									"ai": "SI/NO",
-									"justification": "Justificación breve de la aplicabilidad de IA"
-							}
-					]
-			},
-			"otros subprocesos": {...}
-		}
-
-		Recuerda que en el JSON se deben incluir todos y únicamente los subprocesos que indiqué en la lista: \n${ids}.		
+		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado. 
+		
+		La respuesta será en este formato: \n${jsonOutputStringify}	
 		
 		`;
 		const numTokens = prompt.length / 2.1;
@@ -348,7 +362,7 @@ function Navbar({ onReset }) {
 						// Go object to object into the BpmnValues list
 						const userStories = value.user_stories; //Access user_stories property of every ID
 						const id = BpmnIds[index]; //If any ID has at least one YES on the ai element, include it into yesIds, if not, in noIds
-						const hasYes = userStories.some((story) => story.ai === "SI");
+						const hasYes = userStories.some((story) => story.ai === "SI" || story.ai === "YES");
 						if (hasYes) {
 							acc.yesIds.push(id);
 						} else {
