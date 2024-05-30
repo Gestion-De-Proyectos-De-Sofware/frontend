@@ -16,7 +16,7 @@ import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 
 const openai = new OpenAI({
-	apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+	apiKey: process.env.REACT_APP_GPT_KEY,
 	dangerouslyAllowBrowser: true,
 });
 
