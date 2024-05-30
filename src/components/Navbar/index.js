@@ -104,9 +104,9 @@ const GradientButton = styled(Button)`
 
 function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
-	const { diagramDefinitions } = useDiagramDefinitions();
+	const { diagramDefinitions, newDiagram, reset, canvas } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
-	const { canvas } = useDiagramDefinitions();
+
 
 
 	const colorAI = (yesIds, noIds) => {
@@ -428,43 +428,24 @@ function Navbar({ onReset }) {
 		});
 	}
 
-	{
-		/**  
-	const handleSave = () => {
-		const data = new Blob(["Contenido del archivo"], { type: 'text/plain' });
-		const url = window.URL.createObjectURL(data);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = 'archivo_guardado.txt';
-		link.click();
-		window.URL.revokeObjectURL(url);
-		message.success("Archivo guardado localmente");
-	  };
 
-	const handleNew = () => {
-		if (window.confirm("¿Está seguro de eliminar lo realizado y crear un lienzo nuevo?")) {
-		  // Aquí agregas la lógica para borrar el trabajo actual y empezar uno nuevo
-		  console.log("Lienzo nuevo creado");
-		  message.success("Lienzo nuevo creado");
+	
+	const handleNew = async () => {
+		if (window.confirm(t("Are you sure you want to start a new diagram?"))) {
+			newDiagram();
+		  	message.success(t("New diagram started successfully"));
 		}
 	  };
     
-    
-	  const handleDuplicate = () => {
-		// Aquí agregas la lógica para duplicar el contenido actual
-		console.log("Contenido duplicado");
-		message.success("Contenido duplicado");
-	  };
     
 	  const handleTrash = () => {
-		if (window.confirm("¿Está seguro de eliminar todo lo realizado?")) {
-		  // Aquí agregas la lógica para borrar todo el trabajo realizado
-		  console.log("Todo eliminado");
-		  message.success("Todo eliminado");
-		}
+		if (window.confirm("Are you sure you want to reset the diagram?")) {
+			reset()
+		  	message.success("Diagram reset successfully");
+		} 
 	  };
-  */
-	}
+
+	
 
 	const handleExportImage = () => {
 		if (canvas) {
@@ -492,6 +473,12 @@ function Navbar({ onReset }) {
 
 	const handleFileMenu = async (e) => {
 		switch (e.key) {
+			case "new":
+				await handleNew();
+				break;
+			case "trash":
+				await handleTrash();
+				break;
 			case "save":
 				const xml = await getXmlFromModeler(diagramDefinitions);
 
@@ -536,20 +523,6 @@ function Navbar({ onReset }) {
 			<Menu.Item key="save" id="saveItem">
 				{t("fileMenu.save")}
 			</Menu.Item>
-			<Menu.Item key="trash" id="trashItem">
-				{t("fileMenu.trash")}
-			</Menu.Item>
-			<Menu.Divider />
-			<Menu.Item
-				key="history"
-				id="historyItem"
-				onClick={() => {
-					/** setMostrarHistorial(!mostrarHistorial)*/
-				}}
-			>
-				{t("fileMenu.history")}
-			</Menu.Item>
-			<Menu.Divider />
 			<Menu.Item key="trash" id="trashItem">
 				{t("fileMenu.trash")}
 			</Menu.Item>
