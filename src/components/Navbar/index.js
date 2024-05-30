@@ -12,9 +12,11 @@ import Swal from "sweetalert2";
 import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
 import Sidebar from "./sidebar";
 import styled from "styled-components";
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
 
 const openai = new OpenAI({
-	apiKey: process.env.REACT_APP_GPT_KEY,
+	apiKey: process.env.REACT_APP_OPENAI_API_KEY,
 	dangerouslyAllowBrowser: true,
 });
 
@@ -104,6 +106,8 @@ function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
+	const { canvas } = useDiagramDefinitions();
+
 
 	const colorAI = (yesIds, noIds) => {
 		//Color function
@@ -463,18 +467,27 @@ function Navbar({ onReset }) {
 	}
 
 	const handleExportImage = () => {
-		// const canvas = document.querySelector("canvas");
-		// if (canvas) {
-		//   canvas.toBlob((blob) => {
-		//     const url = URL.createObjectURL(blob);
-		//     const link = document.createElement("a");
-		//     link.href = url;
-		//     link.download = "diagram.png";
-		//     link.click();
-		//     URL.revokeObjectURL(url);
-		//     message.success("Imagen exportada con éxito");
-		//   });
-		// }
+		if (canvas) {
+			const canvasElement = document.getElementById('js-canvas');
+			if (canvasElement) {
+				toPng(canvasElement, {
+					quality: 1.0,  // Máxima calidad
+					pixelRatio: 3  // Aumenta la resolución de la imagen
+				})
+				.then((dataUrl) => {
+					download(dataUrl, 'bpmn-diagram.png');
+					message.success("Imagen exportada con éxito");
+				})
+				.catch((err) => {
+					message.error("Error al exportar el diagrama");
+					console.error('Error al exportar el diagrama', err);
+				});
+			} else {
+				message.error("No se encontró el canvas del diagrama para exportar");
+			}
+		} else {
+			message.error("No se encontró el diagrama para exportar");
+		}
 	};
 
 	const handleFileMenu = async (e) => {
