@@ -53,8 +53,6 @@ const BpmnView = () => {
 				// });
 
 				// canvas.addMarker("SCAN_OK", "needs-discussion");
-				setDiagramDefinitions(viewerRef.current);
-				viewerRef.current.on("element.changed", handleElementChanged);
 			});
 		};
 
