@@ -1,22 +1,16 @@
 import { createContext, useContext, useState } from "react";
 
-const DiagramDefinitionsContext = createContext({});
+const DiagramDefinitionsContext = createContext(null); // Proporciona un valor inicial nulo para el contexto
 
-export const DiagramDefinitionsProvider = (props) => {
-    const [diagramDefinitions, setDiagramDefinitions] = useState();
+export const DiagramDefinitionsProvider = ({ children }) => {
+    const [diagramDefinitions, setDiagramDefinitions] = useState(null);
+    const [canvas, setCanvas] = useState(null);
 
     return (
-        <DiagramDefinitionsContext.Provider
-            value={{
-                diagramDefinitions,
-                setDiagramDefinitions
-            }}
-        >
-            {props.children}
+        <DiagramDefinitionsContext.Provider value={{ diagramDefinitions, setDiagramDefinitions, canvas, setCanvas }}>
+            {children}
         </DiagramDefinitionsContext.Provider>
     );
 };
 
-export const useDiagramDefinitions = () => {
-    return useContext(DiagramDefinitionsContext);
-};
+export const useDiagramDefinitions = () => useContext(DiagramDefinitionsContext);

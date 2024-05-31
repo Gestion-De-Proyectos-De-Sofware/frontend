@@ -11,34 +11,35 @@ import { useDiagramDefinitions } from "./contexts/DiagramDefinitions";
 const BpmnView = () => {
 	const containerRef = useRef(null);
 	const viewerRef = useRef(null);
-	const { setDiagramDefinitions } = useDiagramDefinitions();
+	const { setDiagramDefinitions, setCanvas } = useDiagramDefinitions();
 	const handleElementChanged = (event) => {
 		console.log("Elemento cambiado:", event.element);
 		setDiagramDefinitions(viewerRef.current);
 	};
 	useEffect(() => {
-		viewerRef.current = new BpmnViewer({
-			container: containerRef.current,
-			keyboard: {
-				bindTo: window,
-			},
-			propertiesPanel: {
-				parent: "#propview",
-			},
-			additionalModules: [propertiesPanelModule, propertiesProviderModule],
-			moddleExtensions: {
-				camunda: camundaModdleDescriptor,
-			},
-		});
+        viewerRef.current = new BpmnViewer({
+            container: containerRef.current,
+            keyboard: {
+                bindTo: window,
+            },
+            propertiesPanel: {
+                parent: "#propview",
+            },
+            additionalModules: [propertiesPanelModule, propertiesProviderModule],
+            moddleExtensions: {
+                camunda: camundaModdleDescriptor,
+            },
+        });
 
 		const importXML = (xml, Viewer) => {
-			Viewer.importXML(xml, function (err) {
-				if (err) {
-					return console.error("could not import BPMN 2.0 diagram", err);
-				}
+            Viewer.importXML(xml, function (err) {
+                if (err) {
+                    return console.error("could not import BPMN 2.0 diagram", err);
+                }
 
 				const canvas = Viewer.get("canvas");
 				const overlays = Viewer.get("overlays");
+                setCanvas(canvas); // Almacenar la referencia del canvas en el contexto si es necesario
 
 				// Zoom to fit full viewport
 				canvas.zoom("fit-viewport");
@@ -68,7 +69,7 @@ const BpmnView = () => {
 				viewerRef.current.destroy();
 			}
 		};
-	}, []);
+	}, [setCanvas, setDiagramDefinitions]);
 
 	return (
 		<div style={{ height: "100%" }}>
