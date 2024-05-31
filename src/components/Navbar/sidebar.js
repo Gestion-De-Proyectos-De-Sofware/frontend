@@ -16,10 +16,20 @@ const fetchBpmnListFromStorage = () => {
 
 function Sidebar({ visible, onClose }) {
     const [t] = useTranslation("global");
-    const [bpmnList, setBpmnList] = useState([]);
-    const { setDiagramDefinitions } = useDiagramDefinitions();
+    const [bpmnList, setBpmnList] = useState([]); // Estado para almacenar los elementos de bpmnList
+      const { setDiagramDefinitions } = useDiagramDefinitions();
+
+    const { diagramDefinitions} = useDiagramDefinitions();
     const [selectedKey, setSelectedKey] = useState(null); // Estado para rastrear el elemento seleccionado
 
+    // Función para obtener los elementos de localStorage y parsearlos
+    const fetchBpmnList = () => {
+        console.log("Fetching BPMN List from localStorage");
+        const storedBpmnList = localStorage.getItem('bpmnList');
+        if (storedBpmnList) {
+            setBpmnList(JSON.parse(storedBpmnList));
+        }
+    };
 
     useEffect(() => {
         setBpmnList(fetchBpmnListFromStorage());
@@ -68,14 +78,37 @@ function Sidebar({ visible, onClose }) {
             <Menu>
                 {bpmnList.map((item, index) => (
                     <Menu.Item 
-                        key={index}
-                        style={{
+                      style={{
                             backgroundColor: selectedKey === index ? '#BDBDBD' : '#dbdee0',
                             color: selectedKey === index ? 'black' : 'black'
                         }}
-                        onClick={() => handleMenuItemClick(item, index)}
-                        >
-                        <span >{item.title}</span>
+                    key={index} 
+                    onClick={() => {
+                        diagramDefinitions.importXML(item.xml, function (err) {
+                            if (err) {
+                                return console.error("could not import BPMN 2.0 diagram", err);
+                            }
+
+                            const canvas = diagramDefinitions.get("canvas");
+                            const overlays = diagramDefinitions.get("overlays");
+
+                            // Zoom to fit full viewport
+                            canvas.zoom("fit-viewport");
+
+                            // Attach an overlay to a node
+                            overlays.add("SCAN_OK", "note", {
+                                position: {
+                                    bottom: 0,
+                                    right: 0,
+                                },
+                                html: '<div class="diagram-note">Mixed up the labels?</div>',
+                            });
+
+                            canvas.addMarker("SCAN_OK", "needs-discussion");
+                        });
+
+                        console.log(diagramDefinitions);console.log('Menu item clicked:', item)}}>
+                                                <span >{item.title}</span>
                         <DeleteOutlined 
                             className="icon"
 
