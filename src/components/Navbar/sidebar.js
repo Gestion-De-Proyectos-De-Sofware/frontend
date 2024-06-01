@@ -90,21 +90,21 @@ function Sidebar({ visible, onClose }) {
                             }
 
                             const canvas = diagramDefinitions.get("canvas");
-                            const overlays = diagramDefinitions.get("overlays");
+                            //const overlays = diagramDefinitions.get("overlays");
 
                             // Zoom to fit full viewport
                             canvas.zoom("fit-viewport");
 
                             // Attach an overlay to a node
-                            overlays.add("SCAN_OK", "note", {
-                                position: {
-                                    bottom: 0,
-                                    right: 0,
-                                },
-                                html: '<div class="diagram-note">Mixed up the labels?</div>',
-                            });
+                            // overlays.add("SCAN_OK", "note", {
+                            // 	position: {
+                            // 		bottom: 0,
+                            // 		right: 0,
+                            // 	},
+                            // 	html: '<div class="diagram-note">Mixed up the labels?</div>',
+                            // });
 
-                            canvas.addMarker("SCAN_OK", "needs-discussion");
+                            // canvas.addMarker("SCAN_OK", "needs-discussion");
                         });
 
                         console.log(diagramDefinitions);console.log('Menu item clicked:', item)}}>
