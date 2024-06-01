@@ -138,7 +138,7 @@ function Navbar({ onReset }) {
 	};
 
 	const template = {
-		name: "Nombre subproceso según XML: Descripción actividades de este subproceso",
+		name: "Nombre subproceso según XML",
 		user_stories: [
 			{
 				id: "hu1",
@@ -304,7 +304,7 @@ function Navbar({ onReset }) {
 		-----------------------------------------------------
 		TERCER PASO - TECNOLOGÍAS PARA REALIZAR LA HISTORIA DE USUARIO
 		Por cada historia de usuario que hayas identificado como realizable con IA, deberás proporcionar las tecnologías, librerías, herramientas o software que permiten llevar a cabo la historia de usuario, algunos ejemplos son (no te tienes que limitar solo a estos): Amazon Personalize,Google Cloud Speech-to-Text,Azure Speech,NLTK,spaCy,OpenAI GPT,OpenCV,TensorFlow,Keras,Azure Machine Learning, entre otros.
-		Explica detalladamente la razón de tus elecciones en mínimo 50 palabras y sé específico con las tecnologías a usar.
+		Explica la razón de tus elecciones en mínimo 40 palabras y sé específico con las tecnologías a usar.
 
 		-----------------------------------------------------
 		CUARTO PASO - GENERAR RESPUESTA
@@ -315,7 +315,7 @@ function Navbar({ onReset }) {
 		IMPORTANTE: Debes incluir los siguientes subprocesos (a continuación se indican sus id) en el JSON, NO te puede hacer falta ninguno, ya que esto afecta el uso que le daré a la respuesta que des: \n${ids}
 
 		Recuerda limitar la creatividad.
-		La respuesta de tus hallazgos será en este formato: \n${jsonOutputStringify}
+		La respuesta de tus hallazgos será en este formato JSON: \n${jsonOutputStringify}
 		`;
 
 		// console.log(prompt);
