@@ -44,6 +44,9 @@ function gatherDescriptions(data) {
 		}
 		if (data[key].user_stories) {
 			data[key].user_stories.forEach((story) => {
+				if (story.ai == "SI") {
+					descriptions.push(story.ai);
+				}
 				if (story.justification) {
 					descriptions.push(story.justification);
 				}
@@ -141,13 +144,13 @@ function Navbar({ onReset }) {
 				id: "hu1",
 				description: "Describir historia de usuario 1",
 				ai: "SI/NO",
-				justification: "Justificar aplicabilidad de IA. Tecnologías en 50 palabras",
+				justification: "Justificar aplicabilidad IA. Cuáles tecnologías (TERCER PASO)",
 			},
 			{
 				id: "hu2",
 				description: "Describir historia de usuario 2",
 				ai: "SI/NO",
-				justification: "Justificar aplicabilidad de IA. Tecnologías en 50 palabras",
+				justification: "Justificar aplicabilidad IA. Cuáles tecnologías (TERCER PASO)",
 			},
 		],
 	};
@@ -190,7 +193,6 @@ function Navbar({ onReset }) {
 		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación 
 
 		-----------------------------------------------------
-
 		PRIMER PASO - IDENTIFICAR POSIBLES HISTORIAS DE USUARIO A PARTIR DE CADA UNO DE LOS SUBPROCESOS EN EL BPM
 		
 		Tu tarea es analizar este diagrama y analizar los siguientes subprocesos que serán consignados en la respuesta final en un JSON: \n${ids} (estos son los ids de los subprocesos que hay en el XML) 
@@ -203,10 +205,9 @@ function Navbar({ onReset }) {
 		-Validar tarjeta según medio de pago
 
 		-----------------------------------------------------
-
 		SEGUNDO PASO - IDENTIFICAR HISTORIAS DE USUARIO QUE PUEDEN SER REALIZABLES POR INTELIGENCIA ARTIFICIAL EN SU TOTALIDAD, O PARCIALMENTE
 
-		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible
+		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible
 
 		Criterios de evaluación de IA:
 		- ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
@@ -297,17 +298,15 @@ function Navbar({ onReset }) {
 		Como cliente, deseo recibir una confirmación automática de la finalización de mi orden y envío
 		Como comerciante en línea, deseo una IA que gestione automáticamente el inventario y haga pedidos a los proveedores cuando el stock sea bajo
 		As an employee, I want to send goods for delivery accurately and timely
-		
 
 		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido. En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN
 
 		-----------------------------------------------------
-
 		TERCER PASO - TECNOLOGÍAS PARA REALIZAR LA HISTORIA DE USUARIO
-		Por cada historia de usuario que hayas identificado como realizable con IA, deberás proporcionar las tecnologías, librerías, herramientas o software que permiten llevar a cabo la historia de usuario, por ejemplo: redes neuronales, alg. visión computacional, pln, spaCY, GPT, Gemini, entre otros. Y justifica por qué en 50 palabras.
+		Por cada historia de usuario que hayas identificado como realizable con IA, deberás proporcionar las tecnologías, librerías, herramientas o software que permiten llevar a cabo la historia de usuario, algunos ejemplos son (no te tienes que limitar solo a estos): Amazon Personalize,Google Cloud Speech-to-Text,Azure Speech,NLTK,spaCy,OpenAI GPT,OpenCV,TensorFlow,Keras,Azure Machine Learning, entre otros.
+		Explica detalladamente la razón de tus elecciones en mínimo 50 palabras y sé específico con las tecnologías a usar.
 
 		-----------------------------------------------------
-
 		CUARTO PASO - GENERAR RESPUESTA
 
 		Este es el diagrama en formato XML: \n${modifiedXml} 
@@ -315,8 +314,8 @@ function Navbar({ onReset }) {
 				
 		IMPORTANTE: Debes incluir los siguientes subprocesos (a continuación se indican sus id) en el JSON, NO te puede hacer falta ninguno, ya que esto afecta el uso que le daré a la respuesta que des: \n${ids}
 
-		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado
-		La respuesta será en este formato: \n${jsonOutputStringify}
+		Recuerda limitar la creatividad.
+		La respuesta de tus hallazgos será en este formato: \n${jsonOutputStringify}
 		`;
 
 		// console.log(prompt);
@@ -339,6 +338,8 @@ function Navbar({ onReset }) {
 						},
 					],
 				});
+
+				console.log(response);
 
 				data = JSON.parse(response.choices[0].message.content.replace(/\n/g, ""));
 				Swal.close();
