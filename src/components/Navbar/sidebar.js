@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import { Drawer, Menu } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Drawer, Menu, Input } from 'antd';
+import { EditOutlined, DeleteOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import './sidebar.css';
 import logo from '../../images/logo.png';
 import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 
-// Helper function to fetch BPMN List from localStorage
 const fetchBpmnListFromStorage = () => {
     console.log("Fetching BPMN List from localStorage");
     const storedBpmnList = localStorage.getItem('bpmnList');
@@ -15,21 +14,12 @@ const fetchBpmnListFromStorage = () => {
 };
 
 function Sidebar({ visible, onClose }) {
-    const [t] = useTranslation("global");
-    const [bpmnList, setBpmnList] = useState([]); // Estado para almacenar los elementos de bpmnList
-      const { setDiagramDefinitions } = useDiagramDefinitions();
-
-    const { diagramDefinitions} = useDiagramDefinitions();
-    const [selectedKey, setSelectedKey] = useState(null); // Estado para rastrear el elemento seleccionado
-
-    // Función para obtener los elementos de localStorage y parsearlos
-    const fetchBpmnList = () => {
-        console.log("Fetching BPMN List from localStorage");
-        const storedBpmnList = localStorage.getItem('bpmnList');
-        if (storedBpmnList) {
-            setBpmnList(JSON.parse(storedBpmnList));
-        }
-    };
+    const { t } = useTranslation("global");
+    const [bpmnList, setBpmnList] = useState([]);
+    const { setDiagramDefinitions, diagramDefinitions } = useDiagramDefinitions();
+    const [selectedKey, setSelectedKey] = useState(null);
+    const [editingKey, setEditingKey] = useState(null);
+    const [editedTitle, setEditedTitle] = useState("");
 
     useEffect(() => {
         setBpmnList(fetchBpmnListFromStorage());
@@ -40,20 +30,49 @@ function Sidebar({ visible, onClose }) {
     };
 
     const handleMenuItemClick = (item, index) => {
-        setSelectedKey(index); // Establecer el índice del elemento seleccionado
-        console.log(setDiagramDefinitions);
-        console.log('Menu item clicked:', item);
-        //logica de si se presiono algun icono, no pase lo de arriba
+        if (editingKey == null) {
+            diagramDefinitions.importXML(item.xml, (err) => {
+                if (err) {
+                    return console.error("could not import BPMN 2.0 diagram", err);
+                }
+
+                const canvas = diagramDefinitions.get("canvas");
+                canvas.zoom("fit-viewport");
+            });
+            setSelectedKey(index);
+        }
     };
 
-    const handleEditClick = (item) => {
-        console.log('Edit item clicked:', item);
-        // Aquí puedes agregar la lógica para editar el item
+    const handleEditClick = (item, index) => {
+        setEditingKey(index);
+        setEditedTitle(item.title);
     };
 
-    const handleDeleteClick = (item) => {
-        console.log('Delete item clicked:', item);
-        // Aquí puedes agregar la lógica para eliminar el item
+    const handleDeleteClick = (item, index) => {
+        const newList = bpmnList.filter((_, i) => i !== index);
+        setBpmnList(newList);
+        localStorage.setItem('bpmnList', JSON.stringify(newList));
+        if (selectedKey === index) {
+            setSelectedKey(null);
+        }
+    };
+
+    const handleEditChange = (e) => {
+        setEditedTitle(e.target.value);
+    };
+
+    const handleEditSave = (index) => {
+        const newList = [...bpmnList];
+        newList[index].title = editedTitle;
+        setBpmnList(newList);
+        localStorage.setItem('bpmnList', JSON.stringify(newList));
+        setEditingKey(null);
+        setEditedTitle("");
+    };
+
+    const handleEditCancel = () => {
+        setEditingKey(null);
+        setEditedTitle("");
     };
 
     return (
@@ -82,43 +101,43 @@ function Sidebar({ visible, onClose }) {
                             backgroundColor: selectedKey === index ? '#BDBDBD' : '#dbdee0',
                             color: selectedKey === index ? 'black' : 'black'
                         }}
-                    key={index} 
-                    onClick={() => {
-                        diagramDefinitions.importXML(item.xml, function (err) {
-                            if (err) {
-                                return console.error("could not import BPMN 2.0 diagram", err);
-                            }
-
-                            const canvas = diagramDefinitions.get("canvas");
-                            //const overlays = diagramDefinitions.get("overlays");
-
-                            // Zoom to fit full viewport
-                            canvas.zoom("fit-viewport");
-
-                            // Attach an overlay to a node
-                            // overlays.add("SCAN_OK", "note", {
-                            // 	position: {
-                            // 		bottom: 0,
-                            // 		right: 0,
-                            // 	},
-                            // 	html: '<div class="diagram-note">Mixed up the labels?</div>',
-                            // });
-
-                            // canvas.addMarker("SCAN_OK", "needs-discussion");
-                        });
-
-                        console.log(diagramDefinitions);console.log('Menu item clicked:', item)}}>
-                                                <span >{item.title}</span>
+                        key={index} 
+                        onClick={() => handleMenuItemClick(item, index)}
+                    >
+                        {editingKey === index ? (
+                            <Input 
+                                value={editedTitle}
+                                onChange={handleEditChange}
+                                onPressEnter={() => handleEditSave(index)}
+                                onBlur={handleEditCancel}
+                            />
+                        ) : (
+                            <span>{item.title}</span>
+                        )}
                         <DeleteOutlined 
                             className="icon"
-
-                            onClick={() => handleDeleteClick(item)} 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(item, index);
+                            }} 
                         />
-                        <EditOutlined 
-                            className="icon"
-
-                            onClick={() => handleEditClick(item)} 
-                        />
+                        {editingKey === index ? (
+                            <CheckOutlined 
+                                className="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditSave(index);
+                                }}
+                            />
+                        ) : (
+                            <EditOutlined 
+                                className="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditClick(item, index);
+                                }} 
+                            />
+                        )}
                     </Menu.Item>
                 ))}
             </Menu>

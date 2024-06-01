@@ -12,8 +12,8 @@ import Swal from "sweetalert2";
 import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
 import Sidebar from "./sidebar";
 import styled from "styled-components";
-import { toPng } from 'html-to-image';
-import download from 'downloadjs';
+import { toPng } from "html-to-image";
+import download from "downloadjs";
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -39,13 +39,13 @@ function gatherDescriptions(data) {
 	const descriptions = [];
 
 	for (const key in data) {
-		if (data[key].description) {
-			descriptions.push(data[key].description);
+		if (data[key].justification) {
+			descriptions.push(data[key].justification);
 		}
 		if (data[key].user_stories) {
 			data[key].user_stories.forEach((story) => {
-				if (story.description) {
-					descriptions.push(story.description);
+				if (story.justification) {
+					descriptions.push(story.justification);
 				}
 			});
 		}
@@ -107,8 +107,6 @@ function Navbar({ onReset }) {
 	const { diagramDefinitions, newDiagram, reset, canvas } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
 
-
-
 	const colorAI = (yesIds, noIds) => {
 		//Color function
 		var elementRegistry = diagramDefinitions.get("elementRegistry"); // Get IDs
@@ -137,20 +135,19 @@ function Navbar({ onReset }) {
 	};
 
 	const template = {
-		name: "Nombre del subproceso según el diagrama XML",
-		task_description: "Descripción de las actividades clave que se realizan en este subproceso",
+		name: "Nombre subproceso según XML: Descripción actividades de este subproceso",
 		user_stories: [
 			{
 				id: "hu1",
-				description: "Descripción de la historia de usuario 1",
+				description: "Describir historia de usuario 1",
 				ai: "SI/NO",
-				justification: "Justificación breve de la aplicabilidad de IA",
+				justification: "Justificar aplicabilidad de IA. Tecnologías en 50 palabras",
 			},
 			{
 				id: "hu2",
-				description: "Descripción de la historia de usuario 2",
+				description: "Describir historia de usuario 2",
 				ai: "SI/NO",
-				justification: "Justificación breve de la aplicabilidad de IA",
+				justification: "Justificar aplicabilidad de IA. Tecnologías en 50 palabras",
 			},
 		],
 	};
@@ -177,26 +174,26 @@ function Navbar({ onReset }) {
 		// console.log("XML:", xml);
 
 		let modifiedXml = await removeBpmndiSection(xml);
-		console.log("Modified XML:", modifiedXml);
+		// console.log("Modified XML:", modifiedXml);
 
 		const parser = new DOMParser();
 
 		const xmlDoc = parser.parseFromString(modifiedXml, "application/xml");
 
 		const ids = getIdsWithNameAttribute(xmlDoc);
-		console.log(ids);
+		// console.log(ids);
 
 		const jsonOutput = generateJson(ids, template);
 		const jsonOutputStringify = JSON.stringify(jsonOutput, null, 4);
 
 		let data; //Answer Object
-		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación. 
+		const prompt = `Imagina que eres un analista de sistemas y tienes frente a ti un diagrama de proceso de negocio (BPM) en formato XML que describe un proceso completo en una empresa o aplicación 
 
 		-----------------------------------------------------
 
 		PRIMER PASO - IDENTIFICAR POSIBLES HISTORIAS DE USUARIO A PARTIR DE CADA UNO DE LOS SUBPROCESOS EN EL BPM
 		
-		Tu tarea es analizar este diagrama y analizar los siguientes subprocesos que serán consignados en la respuesta final en un JSON: \n${ids} (estos son los ids de los subprocesos que hay en el XML). 
+		Tu tarea es analizar este diagrama y analizar los siguientes subprocesos que serán consignados en la respuesta final en un JSON: \n${ids} (estos son los ids de los subprocesos que hay en el XML) 
 		
 		Para cada subproceso, describe detalladamente entre 1 y 10 posibles HUs que sean críticas para el proceso.
 		
@@ -205,12 +202,11 @@ function Navbar({ onReset }) {
 		-Seleccionar medio de pago
 		-Validar tarjeta según medio de pago
 
-
 		-----------------------------------------------------
 
 		SEGUNDO PASO - IDENTIFICAR HISTORIAS DE USUARIO QUE PUEDEN SER REALIZABLES POR INTELIGENCIA ARTIFICIAL EN SU TOTALIDAD, O PARCIALMENTE
 
-		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible.
+		Para cada historia de usuario, evalúa si las actividades implicadas pueden ser automatizadas o asistidas por tecnologías de inteligencia artificial, enfocándote en mejorar o asistir las funcionalidades ya existentes en el sistema sin inventar nuevas funcionalidades que no están evidenciadas en el BPM. Justifica brevemente tu respuesta, considerando la complejidad de las tareas, la necesidad de entender o procesar lenguaje natural, reconocimiento de patrones o cualquier otro elemento relevante que la IA podría manejar. Describe brevemente por qué una HU es o no es adecuada para ser realizada con IA, utilizando ejemplos de tecnologías o algoritmos específicos de IA cuando sea posible
 
 		Criterios de evaluación de IA:
 		- ¿La HU involucra la recolección y procesamiento de grandes volúmenes de datos?
@@ -221,67 +217,65 @@ function Navbar({ onReset }) {
 		- ¿Es tecnológicamente factible implementar IA para esta tarea sin excesiva inversión en recursos o alteración del sistema existente?
 		- ¿Es realmente necesario incluir IA para esta tarea? 
 
-		Las historias que marques como realizables por IA, deben cumplir mínimo 3 de los criterios anteriores y obligatoriamente el criterio de ¿Es realmente necesario incluir IA para esta tarea?.
+		Las historias que marques como realizables por IA, deben cumplir mínimo 3 de los criterios anteriores y obligatoriamente el criterio de ¿Es realmente necesario incluir IA para esta tarea?
 		
 		-> Ejemplos de historias de usuario que pueden ser realizadas con inteligencia artificial:
 
-		Que requieran uso de herramientas como reconocimiento de voz a texto, texto a voz, web scraping, reconocimiento de imagenes o patrones, entre otros. 
-		Como gerente de atención al cliente, quiero un chatbot de IA que responda preguntas comunes para reducir el tiempo de espera de los clientes.
-		Como usuario de una aplicación de fitness, deseo recibir recomendaciones personalizadas de ejercicios basadas en mi progreso y objetivos.
-		Como especialista en marketing, quiero que un sistema de IA analice las tendencias de consumo para optimizar nuestras campañas publicitarias.
-		Como editor de un periódico, necesito una herramienta de IA que sugiera titulares atractivos basados en el contenido de los artículos.
-		Como comprador en línea, quiero un asistente de compra virtual que me recomiende productos basados en mis compras anteriores y preferencias.
-		Como analista financiero, deseo utilizar algoritmos de IA para predecir tendencias del mercado y asesorar mejor a mis clientes.
-		Como usuario de una aplicación de citas, quiero que un algoritmo de IA me sugiera matches potenciales basados en compatibilidad de intereses y personalidades.
-		Como administrador de redes sociales, necesito una herramienta de IA que genere automáticamente contenido atractivo para mejorar el engagement en nuestras plataformas.
-		Como reclutador, quiero un sistema de IA que analice currículos automáticamente para encontrar los candidatos más adecuados para una vacante.
-		Como investigador, necesito una herramienta de IA que realice revisiones de literatura y resuma investigaciones relevantes en mi campo.
+		Que requieran uso de herramientas como reconocimiento de voz a texto, texto a voz, web scraping, reconocimiento de imagenes o patrones, entre otros
+		Como gerente de atención al cliente, quiero un chatbot de IA que responda preguntas comunes para reducir el tiempo de espera de los clientes
+		Como usuario de una aplicación de fitness, deseo recibir recomendaciones personalizadas de ejercicios basadas en mi progreso y objetivos
+		Como especialista en marketing, quiero que un sistema de IA analice las tendencias de consumo para optimizar nuestras campañas publicitarias
+		Como editor de un periódico, necesito una herramienta de IA que sugiera titulares atractivos basados en el contenido de los artículos
+		Como comprador en línea, quiero un asistente de compra virtual que me recomiende productos basados en mis compras anteriores y preferencias
+		Como analista financiero, deseo utilizar algoritmos de IA para predecir tendencias del mercado y asesorar mejor a mis clientes
+		Como usuario de una aplicación de citas, quiero que un algoritmo de IA me sugiera matches potenciales basados en compatibilidad de intereses y personalidades
+		Como administrador de redes sociales, necesito una herramienta de IA que genere automáticamente contenido atractivo para mejorar el engagement en nuestras plataformas
+		Como reclutador, quiero un sistema de IA que analice currículos automáticamente para encontrar los candidatos más adecuados para una vacante
+		Como investigador, necesito una herramienta de IA que realice revisiones de literatura y resuma investigaciones relevantes en mi campo
 		Como usuario, quiero poder ingresar mi búsqueda por voz
-		Como gerente de atención al cliente, deseo utilizar herramientas de IA para realizar análisis de sentimiento y resumir las respuestas de las encuestas, ayudando a comprender mejor la satisfacción del cliente.
-		Como agente de atención al cliente, necesito que las consultas sean clasificadas automáticamente por urgencia y tema para priorizar mi trabajo de manera eficiente.
-		Como supervisor de atención al cliente, quiero que los tickets sean asignados automáticamente al agente más adecuado para mejorar la eficiencia en la resolución de problemas.
+		Como gerente de atención al cliente, deseo utilizar herramientas de IA para realizar análisis de sentimiento y resumir las respuestas de las encuestas, ayudando a comprender mejor la satisfacción del cliente
+		Como agente de atención al cliente, necesito que las consultas sean clasificadas automáticamente por urgencia y tema para priorizar mi trabajo de manera eficiente
+		Como supervisor de atención al cliente, quiero que los tickets sean asignados automáticamente al agente más adecuado para mejorar la eficiencia en la resolución de problemas
 		Como empleado de ventas, deseo recibir recomendaciones automáticas de productos alternativos para ofrecer a los clientes
-		Como cliente, deseo recibir sugerencias de productos complementarios a mi orden.
-		Como cliente, quiero recibir recomendaciones de productos similares en caso de que no haya stock.
-		Como gerente de recursos humanos, quiero una herramienta de IA que realice entrevistas preliminares con candidatos para filtrar a los más adecuados.
-		Como agricultor, quiero un sistema de IA que analice las condiciones del suelo y el clima para optimizar el riego y fertilización de mis cultivos.
-		Como administrador de un hospital, necesito una IA que pueda predecir la ocupación de camas para mejorar la planificación de recursos.
-		Como profesor, quiero un asistente de IA que califique automáticamente los exámenes de opción múltiple para ahorrar tiempo.
-		Como usuario de una aplicación de salud mental, deseo recibir recomendaciones personalizadas de meditación basadas en mi estado de ánimo.
-		Como médico, quiero un sistema que analice imágenes de resonancias magnéticas para detectar posibles anomalías.
-		Como usuario de una aplicación de música, deseo recibir recomendaciones de canciones y artistas nuevos basados en mis preferencias y hábitos de escucha.
-		Como profesor, quiero una herramienta que evalúe automáticamente los ensayos de los estudiantes y proporcione comentarios detallados.
-		Como encargado de un servicio de atención al cliente, quiero un sistema que clasifique automáticamente las consultas de los clientes por prioridad.
-		Como gestor de contenido, deseo una herramienta que me sugiera palabras clave y etiquetas para mejorar el SEO de nuestros artículos.
+		Como cliente, deseo recibir sugerencias de productos complementarios a mi orden
+		Como cliente, quiero recibir recomendaciones de productos similares en caso de que no haya stock
+		Como gerente de recursos humanos, quiero una herramienta de IA que realice entrevistas preliminares con candidatos para filtrar a los más adecuados
+		Como agricultor, quiero un sistema de IA que analice las condiciones del suelo y el clima para optimizar el riego y fertilización de mis cultivos
+		Como administrador de un hospital, necesito una IA que pueda predecir la ocupación de camas para mejorar la planificación de recursos
+		Como profesor, quiero un asistente de IA que califique automáticamente los exámenes de opción múltiple para ahorrar tiempo
+		Como usuario de una aplicación de salud mental, deseo recibir recomendaciones personalizadas de meditación basadas en mi estado de ánimo
+		Como médico, quiero un sistema que analice imágenes de resonancias magnéticas para detectar posibles anomalías
+		Como usuario de una aplicación de música, deseo recibir recomendaciones de canciones y artistas nuevos basados en mis preferencias y hábitos de escucha
+		Como profesor, quiero una herramienta que evalúe automáticamente los ensayos de los estudiantes y proporcione comentarios detallados
+		Como encargado de un servicio de atención al cliente, quiero un sistema que clasifique automáticamente las consultas de los clientes por prioridad
+		Como gestor de contenido, deseo una herramienta que me sugiera palabras clave y etiquetas para mejorar el SEO de nuestros artículos
 
 
 		-> Ejemplos de historias de usuario NO realizables de alguna manera con inteligencia artificial: 
 
-		Como encargado de almacén, quiero recibir una notificación cuando el stock de un producto esté por debajo del nivel mínimo para reponerlo.
-		Como usuario, quiero poder solicitar una orden de compra para adquirir materiales de oficina.
-		Como gerente, quiero poder autorizar una orden de compra para la adquisición de nuevos equipos de trabajo.
-		Como supervisor de compras, quiero recibir un informe automatizado con la disponibilidad de los productos en stock para agilizar la autorización de órdenes de compra.
-		Como proveedor, quiero recibir una notificación automática cuando se realice el pago de una factura.
-		Como cliente, quiero que se abra la información del producto en mi aplicación móvil después de escanear el código QR.
-		Como cliente, deseo recibir notificaciones por correo electrónico sobre las promociones mensuales para aprovechar las ofertas especiales.
-		Como usuario final, necesito una opción de restablecimiento de contraseña para recuperar mi acceso cuando lo olvide.
-		Como desarrollador, quiero tener acceso a una API documentada para integrar rápidamente nuestra solución con sistemas externos.
-		Como jugador en una app de videojuegos, quiero poder guardar mi progreso automáticamente para no perder mi avance al salir del juego.
-		Como administrador, quiero poder asignar tareas a los empleados para gestionar mejor la carga de trabajo.
-		Como gerente de proyecto, quiero ver un dashboard de progreso del proyecto para monitorear el estado de todas las tareas activas.
-		Como analista de datos, necesito exportar informes en formato CSV para realizar análisis offline.
-		Como comprador en un e-commerce, quiero agregar productos a un carrito de compras para revisarlos antes de finalizar mi compra.
-		Como miembro de soporte técnico, necesito poder acceder al historial de interacciones del cliente para proporcionar un servicio más personalizado.
-		Como paciente, deseo poder reservar citas médicas en línea para evitar llamadas telefónicas y esperas.
-		Como cliente, quiero notar el código QR para saber que debo escanearlo.
-		Como cliente, quiero escanear el código QR para acceder a la información del producto
+		Como encargado de almacén, quiero recibir una notificación cuando el stock de un producto esté por debajo del nivel mínimo para reponerlo
+		Como usuario, quiero poder solicitar una orden de compra para adquirir materiales de oficina
+		Como gerente, quiero poder autorizar una orden de compra para la adquisición de nuevos equipos de trabajo
+		Como supervisor de compras, quiero recibir un informe automatizado con la disponibilidad de los productos en stock para agilizar la autorización de órdenes de compra
+		Como proveedor, quiero recibir una notificación automática cuando se realice el pago de una factura
 		Como cliente, quiero que se abra la información del producto en mi aplicación móvil después de escanear el código QR
-		Como cliente, quiero poder enviar fácilmente mis consultas a través de la plataforma para que sean atendidas de manera rápida.
-		Como agente de atención al cliente, necesito contactar al cliente para obtener más detalles sobre su consulta, asegurando que tengo toda la información necesaria para proceder.
-		Como agente de atención al cliente, quiero evaluar cada consulta y determinar las posibles soluciones para responder efectivamente a las necesidades del cliente.
-		Como técnico de soporte, necesito actualizar el sistema con los detalles de la solución aplicada para mantener un registro preciso del caso.
-		Como agente de atención al cliente, quiero verificar con el cliente si la solución proporcionada ha resuelto su problema satisfactoriamente para asegurar la calidad del servicio.
-		Como gerente de atención al cliente, quiero que se envíe automáticamente una encuesta de satisfacción al finalizar la interacción para evaluar la calidad del servicio proporcionado.
+		Como cliente, deseo recibir notificaciones por correo electrónico sobre las promociones mensuales para aprovechar las ofertas especiales
+		Como usuario final, necesito una opción de restablecimiento de contraseña para recuperar mi acceso cuando lo olvide
+		Como desarrollador, quiero tener acceso a una API documentada para integrar rápidamente nuestra solución con sistemas externos
+		Como jugador en una app de videojuegos, quiero poder guardar mi progreso automáticamente para no perder mi avance al salir del juego
+		Como administrador, quiero poder asignar tareas a los empleados para gestionar mejor la carga de trabajo
+		Como gerente de proyecto, quiero ver un dashboard de progreso del proyecto para monitorear el estado de todas las tareas activas
+		Como analista de datos, necesito exportar informes en formato CSV para realizar análisis offline
+		Como comprador en un e-commerce, quiero agregar productos a un carrito de compras para revisarlos antes de finalizar mi compra
+		Como miembro de soporte técnico, necesito poder acceder al historial de interacciones del cliente para proporcionar un servicio más personalizado
+		Como paciente, deseo poder reservar citas médicas en línea para evitar llamadas telefónicas y esperas
+		Como cliente, quiero escanear el código QR para acceder a la información del producto
+		Como cliente, quiero poder enviar fácilmente mis consultas a través de la plataforma para que sean atendidas de manera rápida
+		Como agente de atención al cliente, necesito contactar al cliente para obtener más detalles sobre su consulta, asegurando que tengo toda la información necesaria para proceder
+		Como agente de atención al cliente, quiero evaluar cada consulta y determinar las posibles soluciones para responder efectivamente a las necesidades del cliente
+		Como técnico de soporte, necesito actualizar el sistema con los detalles de la solución aplicada para mantener un registro preciso del caso
+		Como agente de atención al cliente, quiero verificar con el cliente si la solución proporcionada ha resuelto su problema satisfactoriamente para asegurar la calidad del servicio
+		Como gerente de atención al cliente, quiero que se envíe automáticamente una encuesta de satisfacción al finalizar la interacción para evaluar la calidad del servicio proporcionado
 		Como empleado de bodega, deseo recibir instrucciones claras sobre cómo empacar la mercancía de forma eficiente
 		Como empleado de ventas, deseo recibir las órdenes de compra de forma clara y organizada
 		Como cliente, deseo recibir sugerencias de productos alternativos en caso de que el producto seleccionado no esté disponible
@@ -291,48 +285,53 @@ function Navbar({ onReset }) {
 		Como cliente, deseo recibir confirmación de mi orden de compra de manera inmediata
 		Como sistema, debo procesar y registrar las órdenes recibidas de los clientes
 		Como cliente, deseo recibir sugerencias de productos similares en caso de que el producto seleccionado no esté disponible
-		Como empleado de bodega, deseo recibir notificaciones automáticas sobre las solicitudes de preparación de paquetes
 		Como sistema, debo verificar automáticamente si hay suficiente stock para procesar una orden
 		Como empleado de bodega, deseo recibir notificaciones automáticas sobre las órdenes de empaque pendientes
 		Como sistema, debo generar automáticamente la etiqueta de envío y coordinar la logística de entrega
-		Como cliente, quiero poder agregar productos al carrito de compra para realizar una orden.
-		Como cliente, deseo recibir notificaciones sobre el estado de mi orden de compra.
-		Como cliente, quiero recibir confirmación de mi orden de compra.
-		Como empleado de ventas, deseo recibir notificaciones automáticas sobre la disponibilidad de mercancías para informar al cliente.
-		Como empleado de ventas, necesito recibir alertas automáticas cuando el stock de un producto esté por debajo del nivel mínimo.
-		Como empleado de bodega, deseo recibir sugerencias de empaquetado eficiente para optimizar el proceso de envío.
-		Como empleado de logística, deseo recibir rutas de envío optimizadas para garantizar la entrega puntual.
-		Como cliente, deseo recibir una confirmación automática de la finalización de mi orden y envío.
-		Como comerciante en línea, deseo una IA que gestione automáticamente el inventario y haga pedidos a los proveedores cuando el stock sea bajo.
-		As an employee, I want to send goods for delivery accurately and timely.
+		Como cliente, quiero poder agregar productos al carrito de compra para realizar una orden
+		Como cliente, quiero recibir confirmación de mi orden de compra
+		Como empleado de ventas, deseo recibir notificaciones automáticas sobre la disponibilidad de mercancías para informar al cliente
+		Como empleado de ventas, necesito recibir alertas automáticas cuando el stock de un producto esté por debajo del nivel mínimo
+		Como empleado de bodega, deseo recibir sugerencias de empaquetado eficiente para optimizar el proceso de envío
+		Como empleado de logística, deseo recibir rutas de envío optimizadas para garantizar la entrega puntual
+		Como cliente, deseo recibir una confirmación automática de la finalización de mi orden y envío
+		Como comerciante en línea, deseo una IA que gestione automáticamente el inventario y haga pedidos a los proveedores cuando el stock sea bajo
+		As an employee, I want to send goods for delivery accurately and timely
 		
 
-		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido. En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN.
-
-		 
+		Asegúrate de que cada historia de usuario identificada para automatización o asistencia por IA esté basada en requerimientos o funcionalidades reales observadas en el diagrama BPMN. Cualquier propuesta de IA debe mejorar directamente estos aspectos sin añadir elementos externos al flujo de procesos establecido. En tus respuestas, limita la creatividad y céntrate en aplicaciones de IA que mejoren o agilicen las funcionalidades ya documentadas. No introduzcas nuevas funcionalidades que no se derivan directamente de los procesos y tareas existentes en el diagrama BPMN
 
 		-----------------------------------------------------
 
-		Este es el diagrama en formato XML: \n${modifiedXml} 
+		TERCER PASO - TECNOLOGÍAS PARA REALIZAR LA HISTORIA DE USUARIO
+		Por cada historia de usuario que hayas identificado como realizable con IA, deberás proporcionar las tecnologías, librerías, herramientas o software que permiten llevar a cabo la historia de usuario, por ejemplo: redes neuronales, alg. visión computacional, pln, spaCY, GPT, Gemini, entre otros. Y justifica por qué en 50 palabras.
 
-		Cuando el name de las task esté en inglés, deberás responder en ese idioma. Responde con el idioma en el que están escritas los name de las task en el XML.
+		-----------------------------------------------------
+
+		CUARTO PASO - GENERAR RESPUESTA
+
+		Este es el diagrama en formato XML: \n${modifiedXml} 
+		Analizando el idioma en el que están escritos los name de las task, deberás responder en ese idioma. Responde con el idioma en el que están escritas los name de las task en el XML
 				
 		IMPORTANTE: Debes incluir los siguientes subprocesos (a continuación se indican sus id) en el JSON, NO te puede hacer falta ninguno, ya que esto afecta el uso que le daré a la respuesta que des: \n${ids}
 
-		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado. 
-		
-		La respuesta será en este formato: \n${jsonOutputStringify}	
-		
+		En tu respuesta, presenta tus hallazgos en un formato JSON claro y estructurado
+		La respuesta será en este formato: \n${jsonOutputStringify}
 		`;
+
+		// console.log(prompt);
 		const numTokens = prompt.length / 2.1;
+
+		console.log("Tokens restantes = ", 16385 - numTokens);
+
 		if (numTokens <= 16385) {
 			try {
-				console.log("Enviando solicitud a GPT");
+				console.log("Solicitud a GPT enviada");
 				const response = await openai.chat.completions.create({
 					model: "gpt-3.5-turbo",
 					// prompt: prompt,
 					// max_tokens: 50,
-					temperature: 0.3,
+					temperature: 0.2,
 					messages: [
 						{
 							content: prompt,
@@ -428,41 +427,36 @@ function Navbar({ onReset }) {
 		});
 	}
 
-
-	
 	const handleNew = async () => {
 		if (window.confirm(t("Are you sure you want to start a new diagram?"))) {
 			newDiagram();
-		  	message.success(t("New diagram started successfully"));
+			message.success(t("New diagram started successfully"));
 		}
-	  };
-    
-    
-	  const handleTrash = () => {
-		if (window.confirm("Are you sure you want to reset the diagram?")) {
-			reset()
-		  	message.success("Diagram reset successfully");
-		} 
-	  };
+	};
 
-	
+	const handleTrash = () => {
+		if (window.confirm("Are you sure you want to reset the diagram?")) {
+			reset();
+			message.success("Diagram reset successfully");
+		}
+	};
 
 	const handleExportImage = () => {
 		if (canvas) {
-			const canvasElement = document.getElementById('js-canvas');
+			const canvasElement = document.getElementById("js-canvas");
 			if (canvasElement) {
 				toPng(canvasElement, {
-					quality: 1.0,  // Máxima calidad
-					pixelRatio: 3  // Aumenta la resolución de la imagen
+					quality: 1.0, // Máxima calidad
+					pixelRatio: 3, // Aumenta la resolución de la imagen
 				})
-				.then((dataUrl) => {
-					download(dataUrl, 'bpmn-diagram.png');
-					message.success("Imagen exportada con éxito");
-				})
-				.catch((err) => {
-					message.error("Error al exportar el diagrama");
-					console.error('Error al exportar el diagrama', err);
-				});
+					.then((dataUrl) => {
+						download(dataUrl, "bpmn-diagram.png");
+						message.success("Imagen exportada con éxito");
+					})
+					.catch((err) => {
+						message.error("Error al exportar el diagrama");
+						console.error("Error al exportar el diagrama", err);
+					});
 			} else {
 				message.error("No se encontró el canvas del diagrama para exportar");
 			}
