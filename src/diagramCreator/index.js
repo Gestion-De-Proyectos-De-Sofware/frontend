@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import BpmnModeler from "bpmn-js";
 import diagramXML from "./resources/newDiagram.bpmn";
 
-const ModelerCreator = () => {
+const ModelerCreator = ({ loadNewDiagram }) => {
+  const diagramModeler = useRef(null);
+  
   useEffect(() => {
     const diagramModeler = new BpmnModeler({
       container: "#js-canvas"
@@ -32,7 +34,7 @@ const ModelerCreator = () => {
     return () => {
       diagramModeler.destroy();
     };
-  }, []);
+  }, [loadNewDiagram]);
 
   return <div id="js-canvas" />;
 };

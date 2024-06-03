@@ -16,7 +16,7 @@ import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 
 const openai = new OpenAI({
-	apiKey: process.env.REACT_APP_GPT_KEY,
+	apiKey: process.env.REACT_APP_OPENAI_API_KEY,
 	dangerouslyAllowBrowser: true,
 });
 
@@ -431,11 +431,11 @@ function Navbar({ onReset }) {
 
 	
 	const handleNew = async () => {
-		if (window.confirm(t("Are you sure you want to start a new diagram?"))) {
-			newDiagram();
-		  	message.success(t("New diagram started successfully"));
-		}
-	  };
+        if (window.confirm("¿Estás seguro que quieres comenzar un nuevo diagrama?")) {
+            newDiagram();
+            message.success("Nuevo diagrama iniciado con éxito");
+        }
+    };
     
     
 	  const handleTrash = () => {
