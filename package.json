@@ -26,7 +26,7 @@
 		"react-scripts": "^5.0.1",
 		"react-select": "^5.8.0",
 		"styled-components": "^6.1.11",
-		"sweetalert2": "^11.10.8"
+		"sweetalert2": "^11.11.0"
 	},
 	"scripts": {
 		"start": "react-scripts start",
