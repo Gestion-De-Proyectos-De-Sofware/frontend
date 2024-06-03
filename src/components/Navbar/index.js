@@ -14,6 +14,7 @@ import Sidebar from "./sidebar";
 import styled from "styled-components";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
+import sidebar from "./sidebar";
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -106,7 +107,7 @@ function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions, newDiagram, reset, canvas } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
-
+	const [currentBPMNIndex, setCurrentBPMNIndex] = useState(null);
 
 
 	const colorAI = (yesIds, noIds) => {
@@ -438,13 +439,20 @@ function Navbar({ onReset }) {
     };
     
     
-	  const handleTrash = () => {
-		if (window.confirm("Are you sure you want to reset the diagram?")) {
-			reset()
-		  	message.success("Diagram reset successfully");
-		} 
-	  };
-
+	const handleTrash = async () => {
+		if (window.confirm("Are you sure you want to delete this diagram?")) {
+			let bpmnList = JSON.parse(localStorage.getItem('bpmnList')) || [];
+			if (currentBPMNIndex !== null && currentBPMNIndex < bpmnList.length) {
+				bpmnList.splice(currentBPMNIndex, 1);
+				localStorage.setItem('bpmnList', JSON.stringify(bpmnList));
+				message.success("Diagram successfully deleted.");
+				reset(); // reset your diagram view/editor
+				setCurrentBPMNIndex(null); // reset the index
+			} else {
+				message.error("No diagram found to delete.");
+			}
+		}
+	};
 	
 
 	const handleExportImage = () => {
