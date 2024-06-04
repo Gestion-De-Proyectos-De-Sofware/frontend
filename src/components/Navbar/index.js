@@ -128,22 +128,22 @@ function Navbar({ onReset }) {
 		
 		if (cantidadTareas === 0) {
 			Swal.fire({
-				html: `<b>No hay tareas realizables con IA</b>`,  // Texto en negrita
+				html: t("sweetalert.bpmnnotrealicetask"),  
 				toast: true,
 				showConfirmButton: true,
 				icon: 'error',  
-				confirmButtonText: 'Entendido',
+				confirmButtonText: t("sweetalert.bpmnconfirmation"),
 				iconColor: '#3085d6',  
 				confirmButtonColor: '#3085d6', 
 				position: 'center',  
 			});
 		}else{
 			Swal.fire({
-				text: `Hay ${cantidadTareas} tareas realizables con IA`,
+				text:  `${cantidadTareas} ${t("sweetalert.bpmnrealicetask")}`,
 				toast: true,
 				showConfirmButton: true,
 				icon: 'info',
-				confirmButtonText: 'Entendido',
+				confirmButtonText: t("sweetalert.bpmnconfirmation"),
 				iconColor: '#3085d6',  
 				confirmButtonColor: '#3085d6',  
 				position: 'center',  
