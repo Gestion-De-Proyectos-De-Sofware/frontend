@@ -117,16 +117,54 @@ function Navbar({ onReset }) {
 		yesIds.forEach((element) => {
 			modeling.setColor(elementRegistry.get(element), {
 				stroke: "black",
-				fill: "green",
+				fill: "#90EE90",
 			});
 		});
-		noIds.forEach((element) => {
-			modeling.setColor(elementRegistry.get(element), {
-				stroke: "black",
-				fill: "red",
-			});
-		});
+
 	};
+
+	const showIADetails = (yesIds, data) => {
+		const historiasIA = yesIds.map((id) => {
+			const userStories = data[id].user_stories.filter((story) => story.ai === "SI" || story.ai === "YES");
+			return userStories.map((story) => ({
+				id,
+				description: story.description,
+				justification: story.justification,
+			}));
+		}).flat();
+	
+		if (historiasIA.length > 0) {
+			const htmlContent = historiasIA.map((historia) => `
+				<strong>${historia.description}</strong>
+				<p>${historia.justification}</p>
+				<hr>
+			`).join("");
+	
+			Swal.fire({
+				title: `${historiasIA.length} ${t("sweetalert.bpmnrealicetask")}`,
+				html: htmlContent,
+				toast: true,
+				showConfirmButton: true,
+				icon: 'info',
+				confirmButtonText: t("sweetalert.bpmnconfirmation"),
+				iconColor: '#3085d6',
+				confirmButtonColor: '#3085d6',
+				position: 'top-end',
+			});
+		}else{
+			Swal.fire({
+				html: t("sweetalert.bpmnnotrealicetask"),  
+				toast: true,
+				showConfirmButton: true,
+				icon: 'error',  
+				confirmButtonText: t("sweetalert.bpmnconfirmation"),
+				iconColor: '#3085d6',  
+				confirmButtonColor: '#3085d6', 
+				position: 'center',  
+			});
+		}
+	};
+	
 
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
@@ -323,6 +361,8 @@ function Navbar({ onReset }) {
 
 		console.log("Tokens restantes = ", 16385 - numTokens);
 
+		console.log(jsonOutputStringify);
+
 		if (numTokens <= 16385) {
 			try {
 				console.log("Solicitud a GPT enviada");
@@ -377,6 +417,7 @@ function Navbar({ onReset }) {
 					{ yesIds: [], noIds: [] }
 				); //Variables initialized
 				colorAI(yesIds, noIds);
+				showIADetails(yesIds, data);
 			} catch (error) {
 				console.error("Error al conectar con la IA", error);
 				if (error.response) {
