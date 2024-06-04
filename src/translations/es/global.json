@@ -26,6 +26,9 @@
         "bpmnsent" : "Analizando BPMN...",
         "bpmnsucess" : "Analisis completado",
         "bpmnerror": "Hubo un error durante el analisis",
-        "bpmnsizeerror": "El BPM es demasiado grande, por favor reducirlo e intentar de nuevo"
+        "bpmnsizeerror": "El BPM es demasiado grande, por favor reducirlo e intentar de nuevo",
+        "bpmnrealicetask": " tareas realizables con IA",
+        "bpmnconfirmation": "Entendido",
+        "bpmnnotrealicetask": "No hay tareas realizables con IA"
     }
 }

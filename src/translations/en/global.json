@@ -26,6 +26,9 @@
         "bpmnsent" : "Analyzing BPMN...",
         "bpmnsucess": "Analysis completed",
         "bpmnerror": "There was an error during the analysis",
-        "bpmnsizeerror": "BPM is too large, please reduce it and try again"
+        "bpmnsizeerror": "BPM is too large, please reduce it and try again",
+        "bpmnrealicetask": " tasks that can be completed with AI",
+        "bpmnconfirmation": "Ok",
+        "bpmnnotrealicetask": "There're no tasks achievable with AI"
     }
 }
