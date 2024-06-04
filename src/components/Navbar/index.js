@@ -117,16 +117,43 @@ function Navbar({ onReset }) {
 		yesIds.forEach((element) => {
 			modeling.setColor(elementRegistry.get(element), {
 				stroke: "black",
-				fill: "green",
+				fill: "#90EE90",
 			});
 		});
-		noIds.forEach((element) => {
-			modeling.setColor(elementRegistry.get(element), {
-				stroke: "black",
-				fill: "red",
-			});
-		});
+
 	};
+
+	const IAtask = (yesIds) => {
+		const cantidadTareas = yesIds.length;
+		
+		if (cantidadTareas === 0) {
+			Swal.fire({
+				html: `<b>No hay tareas realizables con IA</b>`,  // Texto en negrita
+				toast: true,
+				showConfirmButton: true,
+				icon: 'error',  
+				confirmButtonText: 'Entendido',
+				iconColor: '#3085d6',  
+				confirmButtonColor: '#3085d6', 
+				position: 'center',  
+			});
+		}else{
+			Swal.fire({
+				text: `Hay ${cantidadTareas} tareas realizables con IA`,
+				toast: true,
+				showConfirmButton: true,
+				icon: 'info',
+				confirmButtonText: 'Entendido',
+				iconColor: '#3085d6',  
+				confirmButtonColor: '#3085d6',  
+				position: 'center',  
+	
+			});
+		}
+
+		
+	};
+	
 
 	const handleChangeLanguage = (lang) => {
 		console.log("new language choosen: ", lang);
@@ -377,6 +404,7 @@ function Navbar({ onReset }) {
 					{ yesIds: [], noIds: [] }
 				); //Variables initialized
 				colorAI(yesIds, noIds);
+				IAtask(yesIds);
 			} catch (error) {
 				console.error("Error al conectar con la IA", error);
 				if (error.response) {
