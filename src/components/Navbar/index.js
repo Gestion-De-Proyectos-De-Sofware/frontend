@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, Dropdown, Button, message, ConfigProvider } from "antd";
 import { OpenAI } from "openai";
 import { TinyColor } from "@ctrl/tinycolor";
@@ -9,11 +9,13 @@ import { useDiagramDefinitions } from "../../contexts/DiagramDefinitions";
 import xmltest from "../../diagramCreator/resources/test.bpmn";
 import logo from "../../images/logo.png";
 import Swal from "sweetalert2";
-import { MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
+import { DownOutlined, MenuOutlined } from "@ant-design/icons"; // Import MenuOutlined for the sidebar button
 import Sidebar from "./sidebar";
 import styled from "styled-components";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
+import sidebar from "./sidebar";
+
 
 const openai = new OpenAI({
 	apiKey: process.env.REACT_APP_GPT_KEY,
@@ -109,6 +111,24 @@ function Navbar({ onReset }) {
 	const [t, i18n] = useTranslation("global");
 	const { diagramDefinitions, newDiagram, reset, canvas } = useDiagramDefinitions();
 	const [sidebarVisible, setSidebarVisible] = useState(false); // State to manage sidebar visibility
+	const [bpmnList, setBpmnList] = useState(JSON.parse(localStorage.getItem('bpmnList')) || []);
+	const [currentBPMNIndex, setCurrentBPMNIndex] = useState(null);
+	const [menuVisible, setMenuVisible, trashMenuVisible, setTrashMenuVisible] = useState(false);
+
+
+	useEffect(() => {
+        // Cargar BPMN list del almacenamiento local al inicializar el componente
+        const storedBpmnList = JSON.parse(localStorage.getItem('bpmnList')) || [];
+        setBpmnList(storedBpmnList);
+    }, []);
+
+	const { SubMenu } = Menu;
+
+	const onTitleClick = (e) => {
+		if (e && e.stopPropagation) {
+			e.stopPropagation();
+		}
+	};
 
 	const colorAI = (yesIds, noIds) => {
 		//Color function
@@ -470,18 +490,34 @@ function Navbar({ onReset }) {
 	}
 
 	const handleNew = async () => {
-		if (window.confirm(t("Are you sure you want to start a new diagram?"))) {
-			newDiagram();
-			message.success(t("New diagram started successfully"));
-		}
-	};
 
-	const handleTrash = () => {
-		if (window.confirm("Are you sure you want to reset the diagram?")) {
-			reset();
-			message.success("Diagram reset successfully");
+        if (window.confirm("¿Estás seguro que quieres comenzar un nuevo diagrama?")) {
+            newDiagram();
+            message.success("Nuevo diagrama iniciado con éxito");
+        }
+    };
+    
+	const handleSelectDiagram = (index) => {
+		setCurrentBPMNIndex(index);
+	};
+    
+
+
+	const handleTrash = (index) => {
+		if (window.confirm("Are you sure you want to delete this diagram?")) {
+			let updatedBpmnList = [...bpmnList];
+			if (index >= 0 && index < updatedBpmnList.length) {
+				updatedBpmnList.splice(index, 1);
+				localStorage.setItem('bpmnList', JSON.stringify(updatedBpmnList));
+				setBpmnList(updatedBpmnList);
+				message.success("Diagram successfully deleted.");
+			} else {
+				message.error("No diagram found to delete.");
+			}
 		}
 	};
+	
+
 
 	const handleExportImage = () => {
 		if (canvas) {
@@ -507,13 +543,20 @@ function Navbar({ onReset }) {
 		}
 	};
 
+	const handleTrashMenuClick = (e) => {
+        const index = Number(e.key);
+        let newList = [...bpmnList];
+        newList.splice(index, 1);
+        setBpmnList(newList);
+        localStorage.setItem('bpmnList', JSON.stringify(newList));
+        message.success(t('diagramDeletedSuccess'));
+    };
+
+
 	const handleFileMenu = async (e) => {
 		switch (e.key) {
 			case "new":
 				await handleNew();
-				break;
-			case "trash":
-				await handleTrash();
 				break;
 			case "save":
 				const xml = await getXmlFromModeler(diagramDefinitions);
@@ -546,10 +589,18 @@ function Navbar({ onReset }) {
 				}
 				break;
 			default:
+				if (e.key.startsWith("trash-")) {
+					const index = parseInt(e.key.split("-")[1], 10);
+					handleTrash(index);
+				}
 				console.log("No se encontró la file key: ", e.key);
 				break;
 		}
 	};
+
+	
+
+
 
 	const fileMenu = (
 		<Menu onClick={handleFileMenu}>
@@ -559,11 +610,25 @@ function Navbar({ onReset }) {
 			<Menu.Item key="save" id="saveItem">
 				{t("fileMenu.save")}
 			</Menu.Item>
-			<Menu.Item key="trash" id="trashItem">
-				{t("fileMenu.trash")}
-			</Menu.Item>
+			<SubMenu title="Move to Trash" onTitleClick={onTitleClick}>
+				{bpmnList.map((item, index) => (
+					<Menu.Item key={`trash-${index}`}>
+						{item.title}
+					</Menu.Item>
+				))}
+			</SubMenu>
 		</Menu>
 	);
+
+	const trashMenu = (
+        <Menu onClick={handleTrashMenuClick}>
+            {bpmnList.map((item, index) => (
+                <Menu.Item key={index}>
+					{item.title}
+					</Menu.Item>
+            ))}
+        </Menu>
+    );
 
 	return (
 		<div className="navbar-container">
@@ -581,6 +646,7 @@ function Navbar({ onReset }) {
 					overlay={fileMenu}
 					className="navbar-dropdown"
 					trigger={["click"]}
+					placement="bottomLeft"
 					overlayStyle={{ border: "none" }}
 				>
 					<span className="navbar-button">{t("body.buttonFileName")}</span>
